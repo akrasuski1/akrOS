@@ -1,3 +1,5 @@
+
+
 @lazyglobal off.
 
 function make_rect{
@@ -23,9 +25,9 @@ function draw_outline{
 	set eq_str to eq_str+"+".
 	set space_str to space_str+"|".
 	print eq_str at(x,y).
-	print eq_str at(x,y+h).
+	print eq_str at(x,y+h-1).
 	set i to 1.
-	until i=h{
+	until i=h-1{
 		print space_str at(x,y+i).
 		set i to i+1.
 	}

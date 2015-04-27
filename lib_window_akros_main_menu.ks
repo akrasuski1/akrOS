@@ -59,10 +59,13 @@ function update_window_akros_main_menu{
 		if current_ag1<>last_ag1{
 			draw_outline(wnd).
 			set process_state[1] to "program_selection".
+			local options is get_program_list().
+			options:add("Back").
+			options:add("Quit akrOS").
 			local child_process is open_window_menu(
 				wnd,
 				"Select program:",
-				list("Vessel stats","Back","Quit akrOS")
+				options
 			).
 			set process_state[3] to child_process.
 		}

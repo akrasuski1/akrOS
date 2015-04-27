@@ -2,7 +2,11 @@
 
 run lib_window_vessel_stats.
 
-//this file defines which programs you want to have on your OS.
+function get_program_list{
+	return list(
+		"Vessel stats"
+	).
+}
 
 function get_process_from_name{
 	parameter

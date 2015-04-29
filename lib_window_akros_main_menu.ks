@@ -1,8 +1,5 @@
 @lazyglobal off.
 
-run lib_window.
-run lib_window_menu.
-
 function open_window_akros_main_menu{
 	parameter os_data.
 
@@ -89,7 +86,7 @@ function update_window_akros_main_menu{
 				local all_proc is get_process_list(os_data).
 				local i is 0.
 				until i=all_proc:length{
-					end_process(all_proc[i]).
+					kill_process(all_proc[i]). //kill'em all
 					set i to i+1.
 				}
 				return 0.
@@ -125,7 +122,7 @@ function update_window_akros_main_menu{
 		if process_finished(child_process){
 			draw_empty_window(wnd).
 			
-			local other_process is get_process_from_name(
+			local other_process is make_process_from_name(
 				os_data,process[6],selection
 			).
 

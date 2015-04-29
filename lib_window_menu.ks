@@ -5,7 +5,8 @@
 run lib_window.
 
 function open_window_menu{
-	parameter list_of_windows,
+	parameter
+		list_of_windows,
 		window_index,
 		title,
 		list_of_names.
@@ -17,14 +18,15 @@ function open_window_menu{
 	local last_down is ag8.
 	local last_sel is ag9.
 	local process is list(
-		list(false,list_of_windows,"update_window_menu",true,window_index),
+		make_process_system_struct(
+			list_of_windows,"update_window_menu",window_index
+		),
 		current_option,last_up,last_down,last_sel,list_of_names,title
 	).
 	return process.
 }
 
-function draw_window_menu{ //this is opt-in function. If other programs'
-	//developers don't want to react to terminal change, fine.
+function draw_window_menu{
 	parameter process.
 
 	if not is_process_gui(process){
@@ -68,16 +70,24 @@ function update_window_menu{
 	}
 
 	if ag7<>last_up{
-		print " " at(x+3,y+4+current_option).
+		if is_process_gui(process){
+			print " " at(x+3,y+4+current_option).
+		}
 		set current_option to mod(current_option-1+len,len).
-		print "*" at(x+3,y+4+current_option).
+		if is_process_gui(process){
+			print "*" at(x+3,y+4+current_option).
+		}
 		set process[2] to ag7.
 		set process[1] to current_option.
 	}
 	else if ag8<>last_down{
-		print " " at(x+3,y+4+current_option).
+		if is_process_gui(process){
+			print " " at(x+3,y+4+current_option).
+		}
 		set current_option to mod(current_option+1,len).
-		print "*" at(x+3,y+4+current_option).
+		if is_process_gui(process){
+			print "*" at(x+3,y+4+current_option).
+		}
 		set process[3] to ag8.
 		set process[1] to current_option.
 	}

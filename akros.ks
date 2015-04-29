@@ -59,7 +59,7 @@ function resize_windows{
 		0
 	).
 	for wnd in get_window_list(os_data){
-		draw_outline(wnd).
+		draw_empty_window(wnd).
 	}
 	for proc in get_process_list(os_data){
 		invalidate_process_window(proc).

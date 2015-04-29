@@ -2,8 +2,6 @@
 // select one of the options and return it to calling script.
 @lazyglobal off.
 
-run lib_window.
-
 function open_window_menu{
 	parameter
 		list_of_windows,
@@ -92,7 +90,7 @@ function update_window_menu{
 		set process[1] to current_option.
 	}
 	else if ag9<>last_sel{
-		end_process(process).
+		kill_process(process).//suicide
 		return process[5][current_option].
 	}
 }

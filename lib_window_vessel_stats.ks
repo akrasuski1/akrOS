@@ -4,23 +4,24 @@ run lib_window.
 run lib_navball.
 
 function open_window_vessel_stats{
-	parameter window.
+	parameter 
+		list_of_windows,
+		window_index.
 
-	local process_state to list(
-		list(false,window,"update_window_vessel_stats",false)
+	local process to list(
+		list(false,list_of_windows,"update_window_vessel_stats",true,window_index)
 	).
-	draw_window_vessel_stats(process_state).
-	return process_state.
+	return process.
 }
 
 function draw_window_vessel_stats{
-	parameter process_state.
+	parameter process.
 
-	if not is_process_gui(process_state){
+	if not is_process_gui(process){
 		return.
 	}
 
-	local window is get_process_window(process_state).
+	local window is get_process_window(process).
 
 	print "Vessel stats:" at(window[0]+2,window[1]+2).
 	print "Latitude: " at(window[0]+2,window[1]+4).
@@ -47,13 +48,13 @@ function bool_to_on_off{
 }
 
 function update_window_vessel_stats{
-	parameter process_state.
+	parameter process.
 
-	if process_needs_redraw(process_state){
-		draw_window_vessel_stats(process_state).
+	if process_needs_redraw(process){
+		draw_window_vessel_stats(process).
 	}
 
-	local wnd is get_process_window(process_state).
+	local wnd is get_process_window(process).
 	print round(ship:geoposition:lat,5) at(wnd[0]+12,wnd[1]+4).
 	print round(ship:geoposition:lng,5) at(wnd[0]+13,wnd[1]+5).
 	print round(compass_for(ship),5)    at(wnd[0]+11,wnd[1]+6).
@@ -65,5 +66,4 @@ function update_window_vessel_stats{
 	print bool_to_on_off(gear)          at(wnd[0]+8, wnd[1]+12).
 	print bool_to_on_off(lights)        at(wnd[0]+10,wnd[1]+13).
 	print bool_to_on_off(panels)        at(wnd[0]+10,wnd[1]+14).
-	return -1.
 }

@@ -8,7 +8,7 @@ function get_program_list{
 	).
 }
 
-function get_process_from_name{
+function make_process_from_name{
 	parameter
 		os_data,
 		program_name,

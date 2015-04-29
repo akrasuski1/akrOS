@@ -8,8 +8,10 @@ function open_window_vessel_stats{
 		list_of_windows,
 		window_index.
 
-	local process to list(
-		list(false,list_of_windows,"update_window_vessel_stats",true,window_index)
+	local process is list(
+		make_process_system_struct(
+			list_of_windows,"update_window_vessel_stats",window_index
+		)
 	).
 	return process.
 }
@@ -52,6 +54,9 @@ function update_window_vessel_stats{
 
 	if process_needs_redraw(process){
 		draw_window_vessel_stats(process).
+	}
+	if not is_process_gui(process){
+		return. //no point of drawing stuff if I'm backgrounded
 	}
 
 	local wnd is get_process_window(process).

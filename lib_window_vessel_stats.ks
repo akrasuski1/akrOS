@@ -1,7 +1,6 @@
 @lazyglobal off.
 
-run lib_window.
-run lib_navball.
+run lib_navball. // for compass
 
 function open_window_vessel_stats{
 	parameter 

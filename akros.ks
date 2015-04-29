@@ -1,6 +1,11 @@
-run lib_window_akros_main_menu.
-run lib_process.
+// Common includes:
 run lib_os_data.
+run lib_process.
+run lib_window.
+run lib_window_akros_main_menu.
+run lib_window_menu.
+run lib_exec.
+// User defined programs:
 run gui_programs.
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
@@ -67,8 +72,8 @@ function resize_windows{
 }
 
 set window_tree to list( //this is just initial window tree - we need
-	"v",0.5,list("x"),list( //something to start with.
-		"h",0.5,list("x"),list("x")
+	"v",0.5,list("x"),list( //something to start with. Maybe later
+		"h",0.5,list("x"),list("x") // save a few of those as presets.
 	)
 ).
 // each window is there represented as a list. If first element is 

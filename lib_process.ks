@@ -1,7 +1,5 @@
 @lazyglobal off.
 
-run lib_exec.
-
 //process is a struct (list) containing process system info
 //and, as a second element, process internal variables list.
 //System info:
@@ -39,7 +37,7 @@ function is_process_gui{
 
 
 //SET:
-function end_process{
+function kill_process{
 	parameter process.
 	set process[0][0] to true.
 }

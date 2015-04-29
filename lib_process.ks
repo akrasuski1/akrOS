@@ -64,6 +64,20 @@ function change_process_window{
 }
 
 //OTHER:
+function make_process_system_struct{
+	parameter
+		list_of_windows,
+		update_function,
+		window_index.
+	return list(
+		false, // not finished yet
+		list_of_windows,
+		update_function,
+		true, // redraw needed
+		window_index
+	).
+}
+
 function update_process{
 	parameter process.
 	return evaluate_function(
@@ -81,7 +95,7 @@ function update_all_processes{
 		if process_finished(proc){
 			process_list:remove(i).
 			if is_process_gui(proc){
-				draw_outline(get_process_window(proc)).
+				draw_empty_window(get_process_window(proc)).
 			}
 		}
 		else{

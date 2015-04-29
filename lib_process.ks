@@ -2,6 +2,16 @@
 
 run lib_exec.
 
+//process is a struct (list) containing process system info
+//and, as a second element, process internal variables list.
+//System info:
+//[0] - Process_finished (bool)
+//[1] - List_of_all_windows (list)
+//[2] - Update_function (string)
+//[3] - Please_redraw (bool)
+//[4] - Index of my window (struct) - if non-gui, invalid index (e.g. -1)
+
+//GET:
 function process_finished{
 	parameter process.
 	return process[0][0].
@@ -9,7 +19,7 @@ function process_finished{
 
 function get_process_window{
 	parameter process.
-	return process[0][1].
+	return process[0][1][process[0][4]].
 }
 
 function get_process_update_function{
@@ -22,44 +32,45 @@ function process_needs_redraw{
 	return process[0][3].
 }
 
+function is_process_gui{
+	parameter process.
+	return process[0][4]>=0 and process[0][4]<process[0][1]:length.
+}
+
+
+//SET:
 function end_process{
 	parameter process.
 	set process[0][0] to true.
 }
 
-function is_process_gui{
+function invalidate_process_window{
 	parameter process.
-	return process[0][1]:length>0.
+	set process[0][3] to true.
+}
+
+function validate_process_window{
+	parameter process.
+	set process[0][3] to false.
 }
 
 function change_process_window{
-	parameter process.
-	parameter window.
+	parameter
+		process,
+		index.
 
-	set process[0][1] to window.
-	set process[0][3] to true.
+	set process[0][4] to index.
+	invalidate_process_window(process).
 }
 
-function invalidate_process_window{
-	parameter process.
-
-	set process[0][3] to true.
-}
-
+//OTHER:
 function update_process{
 	parameter process.
-	//process is a struct (list) containing process system info
-	//and, as a second element, process internal variables list.
-	//System info:
-	//[0] - Process_finished (bool)
-	//[1] - Display_window (struct) - if non-gui, empty list
-	//[2] - Update_function (string)
-	//[3] - Please_redraw (bool)
-	global __process_state is process.
-	return evaluate(
-		get_process_update_function(process)+"(__process_state)"
+	return evaluate_function(
+		get_process_update_function(process),
+		list(process)
 	).
-	//TODO: update above line when new lib_exec comes
+	//TODO: update above line function pointers come.
 }
 
 function update_all_processes{

@@ -1,7 +1,5 @@
 @lazyglobal off.
 
-run lib_window.
-
 function open_window_number_dialog{
 	parameter window.
 	parameter title.
@@ -47,7 +45,7 @@ function update_window_number_dialog{
 	}
 
 	if old_enter<>ag10{
-		end_process(process).
+		kill_process(process).
 		return number.
 	}
 	print title +" "+ number+spaces at(window[0]+2,window[1]+2).

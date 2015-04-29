@@ -8,8 +8,10 @@ function make_rect{
 	return list(x,y,w,h). //returning list as a window handle
 }
 
-function draw_outline{
-	parameter rect.
+function draw_filled_window{
+	parameter
+		rect,
+		character.
 	local x is rect[0].
 	local y is rect[1].
 	local w is rect[2].
@@ -19,7 +21,7 @@ function draw_outline{
 	local i is 0.
 	until i=w-2{
 		set eq_str to eq_str+"=".
-		set space_str to space_str+" ".
+		set space_str to space_str+character.
 		set i to i+1.
 	}
 	set eq_str to eq_str+"+".
@@ -31,4 +33,9 @@ function draw_outline{
 		print space_str at(x,y+i).
 		set i to i+1.
 	}
+}
+
+function draw_empty_window{
+	parameter rect.
+	draw_filled_window(rect," ").
 }

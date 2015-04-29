@@ -7,7 +7,9 @@ function open_window_akros_main_menu{
 	parameter os_data.
 
 	local process is list(
-		list(false,get_window_list(os_data),"update_window_akros_main_menu",true,0),
+		make_process_system_struct(
+			get_window_list(os_data),"update_window_akros_main_menu",0
+		),
 		"title_screen",ag1,"child_proc_place","reserved","reserved",
 		"selected_program",os_data
 	).
@@ -23,16 +25,21 @@ function draw_window_akros_main_menu{
 
 	local window is get_process_window(process).
 
-	print "aaa  k       OOOO SSSS" at(window[0]+2,window[1]+2).
-	print "  a  k       O  O S   " at(window[0]+2,window[1]+3).
-	print "aaa  k k rrr O  O SSSS" at(window[0]+2,window[1]+4).
-	print "a a  kk  r   O  O    S" at(window[0]+2,window[1]+5).
-	print "aaaa k k r   OOOO SSSS" at(window[0]+2,window[1]+6).
+	if window[2]>=26{
+		print "aaa  k       OOOO SSSS" at(window[0]+2,window[1]+2).
+		print "  a  k       O  O S   " at(window[0]+2,window[1]+3).
+		print "aaa  k k rrr O  O SSSS" at(window[0]+2,window[1]+4).
+		print "a a  kk  r   O  O    S" at(window[0]+2,window[1]+5).
+		print "aaaa k k r   OOOO SSSS" at(window[0]+2,window[1]+6).
+	}
+	else{
+		print "Welcome to akrOS." at(window[0]+2,window[1]+4).
+	}
 
 	print "Press 1 to start." at(window[0]+2,window[1]+8).
 
 	print "v0.0, by akrasuski1" at(window[0]+window[2]-20,
-									window[1]+window[3]-1).
+									window[1]+window[3]-2).
 	
 	validate_process_window(process).
 }
@@ -55,7 +62,7 @@ function update_window_akros_main_menu{
 		local wnd is get_process_window(process).
 
 		if current_ag1<>last_ag1{
-			draw_outline(wnd).
+			draw_empty_window(wnd).
 			set process[1] to "program_selection".
 			local options is get_program_list().
 			options:add("Back").
@@ -77,7 +84,7 @@ function update_window_akros_main_menu{
 		}
 		local selection is update_process(child_process).
 		if process_finished(child_process){
-			draw_outline(wnd).
+			draw_empty_window(wnd).
 			if selection="Quit akrOS"{
 				local all_proc is get_process_list(os_data).
 				local i is 0.
@@ -116,7 +123,7 @@ function update_window_akros_main_menu{
 		}
 		local selection is update_process(child_process).
 		if process_finished(child_process){
-			draw_outline(wnd).
+			draw_empty_window(wnd).
 			
 			local other_process is get_process_from_name(
 				os_data,process[6],selection
@@ -142,7 +149,7 @@ function update_window_akros_main_menu{
 		}
 		update_process(child_process).
 		if process_finished(child_process){
-			draw_outline(wnd).
+			draw_empty_window(wnd).
 			invalidate_process_window(process).
 			set process[1] to "title_screen".
 		}
@@ -151,7 +158,7 @@ function update_window_akros_main_menu{
 			//user turns on non-interactive process on window 0.
 			//On ag1, it is immediately killed.
 			set process[1] to "title_screen".
-			draw_outline(wnd).
+			draw_empty_window(wnd).
 			invalidate_process_window(process).
 		}
 	}

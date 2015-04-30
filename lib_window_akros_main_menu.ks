@@ -35,7 +35,7 @@ function draw_window_akros_main_menu{
 
 	print "Press 1 to start." at(window[0]+2,window[1]+8).
 
-	print "v0.0, by akrasuski1" at(window[0]+window[2]-20,
+	print "v0.1, by akrasuski1" at(window[0]+window[2]-20,
 									window[1]+window[3]-2).
 	
 	validate_process_window(process).

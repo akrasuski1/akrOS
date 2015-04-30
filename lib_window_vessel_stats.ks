@@ -19,7 +19,7 @@ function draw_window_vessel_stats{
 	parameter process.
 
 	if not is_process_gui(process){
-		return.
+		return 0.
 	}
 
 	local window is get_process_window(process).
@@ -55,9 +55,8 @@ function update_window_vessel_stats{
 		draw_window_vessel_stats(process).
 	}
 	if not is_process_gui(process){
-		return. //no point of drawing stuff if I'm backgrounded
+		return 0. //no point of drawing stuff if I'm backgrounded
 	}
-
 	local wnd is get_process_window(process).
 	print round(ship:geoposition:lat,5) at(wnd[0]+12,wnd[1]+4).
 	print round(ship:geoposition:lng,5) at(wnd[0]+13,wnd[1]+5).

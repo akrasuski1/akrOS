@@ -17,7 +17,7 @@ function draw_window_akros_main_menu{
 	parameter process.
 	
 	if not is_process_gui(process){
-		return.
+		return 0.
 	}
 
 	local window is get_process_window(process).
@@ -62,6 +62,7 @@ function update_window_akros_main_menu{
 			draw_empty_window(wnd).
 			set process[1] to "program_selection".
 			local options is get_program_list().
+			options:add("Window Manager").
 			options:add("Back").
 			options:add("Quit akrOS").
 			local child_process is open_window_menu(
@@ -95,6 +96,11 @@ function update_window_akros_main_menu{
 				set process[1] to "title_screen".
 				invalidate_process_window(process).
 			}
+			else if selection="Window Manager"{
+				set process[1] to "waiting_for_foreground".
+				local child_process is open_window_manager(os_data).
+				set process[3] to child_process.
+			}
 			else{
 				local len is get_window_list(os_data):length.
 				local lw is list().
@@ -103,6 +109,7 @@ function update_window_akros_main_menu{
 					lw:add(i).
 					set i to i+1.
 				}
+				lw:add("Background").
 				set child_process to open_window_menu(
 					get_window_list(os_data),0,"Select window",lw
 				).
@@ -120,6 +127,9 @@ function update_window_akros_main_menu{
 		}
 		local selection is update_process(child_process).
 		if process_finished(child_process){
+			if selection="Background"{
+				set selection to -1.
+			}
 			draw_empty_window(wnd).
 			
 			local other_process is make_process_from_name(
@@ -146,6 +156,8 @@ function update_window_akros_main_menu{
 		}
 		update_process(child_process).
 		if process_finished(child_process){
+			set wnd to get_process_window(process). //need to reset in
+			//case child changed windows (i.e. window manager)
 			draw_empty_window(wnd).
 			invalidate_process_window(process).
 			set process[1] to "title_screen".

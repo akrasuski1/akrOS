@@ -16,7 +16,7 @@ function draw_window_number_dialog{
 	parameter process.
 
 	if not is_process_gui(process){
-		return.
+		return 0.
 	}
 
 	local window is get_process_window(process).

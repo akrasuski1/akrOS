@@ -4,6 +4,7 @@ run lib_process.
 run lib_window.
 run lib_window_akros_main_menu.
 run lib_window_menu.
+run lib_window_manager.
 run lib_exec.
 // User defined programs:
 run gui_programs.
@@ -17,39 +18,30 @@ function reset_window_list{
 	parameter
 		list_of_windows,
 		divided_window,
-		window,
-		cnt.
+		window.
 	
 	if divided_window[0]="x"{
-		if list_of_windows:length()<=cnt{
-			list_of_windows:add(window:copy()).
-		}
-		else{
-			set list_of_windows[cnt] to window:copy().
-		}
-		return cnt+1.
+		list_of_windows:add(window:copy()).
 	}
 	if divided_window[0]="v"{
-		local first_window_share is round((window[2]-1)*divided_window[1]).
+		local first_window_share is round(window[2]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[2] to first_window_share.
-		reset_window_list(list_of_windows,divided_window[2],wnd1,cnt).
+		reset_window_list(list_of_windows,divided_window[2],wnd1).
 		local wnd2 is wnd1:copy().
 		set wnd2[0] to wnd1[0]+wnd1[2]-1.
-		set wnd2[2] to window[2]-wnd1[0]-wnd1[2]+1.
-		reset_window_list(list_of_windows,divided_window[3],wnd2,cnt+1).
-		return cnt+2.
+		set wnd2[2] to window[2]-wnd1[2]+1.
+		reset_window_list(list_of_windows,divided_window[3],wnd2).
 	}
 	if divided_window[0]="h"{
-		local first_window_share is round((window[3]-1)*divided_window[1]).
+		local first_window_share is round(window[3]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[3] to first_window_share.
-		reset_window_list(list_of_windows,divided_window[2],wnd1,cnt).
+		reset_window_list(list_of_windows,divided_window[2],wnd1).
 		local wnd2 is wnd1:copy().
 		set wnd2[1] to wnd1[1]+wnd1[3]-1.
-		set wnd2[3] to window[3]-wnd1[1]-wnd1[3]+1.
-		reset_window_list(list_of_windows,divided_window[3],wnd2,cnt+1).
-		return cnt+2.
+		set wnd2[3] to window[3]-wnd1[3]+1.
+		reset_window_list(list_of_windows,divided_window[3],wnd2).
 	}
 }
 
@@ -57,15 +49,18 @@ function resize_windows{
 	parameter os_data.
 
 	clearscreen.
+	get_window_list(os_data):clear().
 	reset_window_list(
 		get_window_list(os_data),
 		get_window_tree(os_data),
-		make_rect(0,0,terminal:width,terminal:height-2),
-		0
+		make_rect(0,0,terminal:width,terminal:height-2)
 	).
 	for wnd in get_window_list(os_data){
 		draw_empty_window(wnd).
+		log "asd" to "log1".
 	}
+	log get_window_list(os_data):dump() to "log1".
+	log get_window_tree(os_data):dump() to "tree".
 	for proc in get_process_list(os_data){
 		invalidate_process_window(proc).
 	}

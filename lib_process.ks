@@ -78,9 +78,9 @@ function make_process_system_struct{
 
 function update_process{
 	parameter process.
-	return evaluate_function(
-		get_process_update_function(process),
-		list(process)
+	global __process_state is process.
+	return evaluate(
+		get_process_update_function(process)+"(__process_state)"
 	).
 	//TODO: update above line function pointers come.
 }

@@ -3,7 +3,7 @@
 // os_data is a list of:
 // [0] - window tree, represented as documented in main file
 // [1] - list of all windows (simple list, not tree or what not)
-// [1] - list of all processes
+// [2] - list of all processes
 
 function get_window_tree{
 	parameter os_data.

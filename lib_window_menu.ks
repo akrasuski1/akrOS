@@ -4,7 +4,7 @@
 
 function open_window_menu{
 	parameter
-		list_of_windows,
+		os_data,
 		window_index,
 		title,
 		list_of_names,
@@ -18,7 +18,7 @@ function open_window_menu{
 	local last_sel is ag9.
 	local process is list(
 		make_process_system_struct(
-			list_of_windows,"update_window_menu",window_index,"Menu"
+			os_data,"update_window_menu",window_index,"Menu"
 		),
 		current_option,last_up,last_down,last_sel,list_of_names,title,
 		return_index

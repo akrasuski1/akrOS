@@ -8,34 +8,99 @@ function make_rect{
 	return list(x,y,w,h). //returning list as a window handle
 }
 
-function draw_filled_window{
-	parameter
-		rect,
-		character.
+function draw_empty_window{
+	parameter rect.
+
 	local x is rect[0].
 	local y is rect[1].
 	local w is rect[2].
 	local h is rect[3].
-	local eq_str is "+".
-	local space_str is "|".
+	local top_str is "+".
+	local side_str is "|".
 	local i is 0.
 	until i>=w-2{
-		set eq_str to eq_str+"=".
-		set space_str to space_str+character.
+		set top_str to top_str+"=".
+		set side_str to side_str+" ".
 		set i to i+1.
 	}
-	set eq_str to eq_str+"+".
-	set space_str to space_str+"|".
-	print eq_str at(x,y).
-	print eq_str at(x,y+h-1).
+	set top_str to top_str+"+".
+	set side_str to side_str+"|".
+	print top_str at(x,y).
+	print top_str at(x,y+h-1).
 	set i to 1.
 	until i>=h-1{
-		print space_str at(x,y+i).
+		print side_str at(x,y+i).
 		set i to i+1.
 	}
 }
 
-function draw_empty_window{
+function draw_empty_background{
 	parameter rect.
-	draw_filled_window(rect," ").
+
+	local x is rect[0].
+	local y is rect[1].
+	local w is rect[2].
+	local h is rect[3].
+	local side_str is "".
+	local i is 0.
+	until i>=w-2{
+		set side_str to side_str+" ".
+		set i to i+1.
+	}
+	set side_str to side_str+"".
+	set i to 1.
+	until i>=h-1{
+		print side_str at(x+1,y+i).
+		set i to i+1.
+	}
+}
+
+function draw_window_outline{
+	parameter rect.
+
+	local x is rect[0].
+	local y is rect[1].
+	local w is rect[2].
+	local h is rect[3].
+	local top_str is "+".
+	local side_str is "|".
+	local i is 0.
+	until i>=w-2{
+		set top_str to top_str+"=".
+		set i to i+1.
+	}
+	set top_str to top_str+"+".
+	print top_str at(x,y).
+	print top_str at(x,y+h-1).
+	set i to 1.
+	until i>=h-1{
+		print side_str at(x,y+i).
+		print side_str at(x+w-1,y+i).
+		set i to i+1.
+	}
+}
+
+function draw_focused_window_outline{
+	parameter rect.
+
+	local x is rect[0].
+	local y is rect[1].
+	local w is rect[2].
+	local h is rect[3].
+	local top_str is "#".
+	local side_str is "#".
+	local i is 0.
+	until i>=w-2{
+		set top_str to top_str+"#".
+		set i to i+1.
+	}
+	set top_str to top_str+"#".
+	print top_str at(x,y).
+	print top_str at(x,y+h-1).
+	set i to 1.
+	until i>=h-1{
+		print side_str at(x,y+i).
+		print side_str at(x+w-1,y+i).
+		set i to i+1.
+	}
 }

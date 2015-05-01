@@ -9,7 +9,8 @@ function open_window_vessel_stats{
 
 	local process is list(
 		make_process_system_struct(
-			list_of_windows,"update_window_vessel_stats",window_index
+			list_of_windows,"update_window_vessel_stats",window_index,
+			"Vessel stats"
 		)
 	).
 	return process.

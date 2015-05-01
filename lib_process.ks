@@ -7,7 +7,8 @@
 //[1] - List_of_all_windows (list)
 //[2] - Update_function (string)
 //[3] - Please_redraw (bool)
-//[4] - Index of my window (struct) - if non-gui, invalid index (e.g. -1)
+//[4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
+//[5] - Proces name (string)
 
 //GET:
 function process_finished{
@@ -35,6 +36,10 @@ function is_process_gui{
 	return process[0][4]>=0 and process[0][4]<process[0][1]:length.
 }
 
+function get_process_name{
+	parameter process.
+	return process[0][5].
+}
 
 //SET:
 function kill_process{
@@ -61,18 +66,27 @@ function change_process_window{
 	invalidate_process_window(process).
 }
 
+function set_process_name{
+	parameter
+		process,
+		name.
+	set process[0][5] to name.
+}
+
 //OTHER:
 function make_process_system_struct{
 	parameter
 		list_of_windows,
 		update_function,
-		window_index.
+		window_index,
+		name.
 	return list(
 		false, // not finished yet
 		list_of_windows,
 		update_function,
 		true, // redraw needed
-		window_index
+		window_index,
+		name
 	).
 }
 

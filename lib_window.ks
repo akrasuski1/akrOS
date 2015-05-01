@@ -104,3 +104,16 @@ function draw_focused_window_outline{
 		set i to i+1.
 	}
 }
+
+function draw_window_corners{
+	parameter rect.
+
+	local x is rect[0].
+	local y is rect[1].
+	local w is rect[2].
+	local h is rect[3].
+	print "+" at(x,y).
+	print "+" at(x,y+h-1).
+	print "+" at(x+w-1,y).
+	print "+" at(x+w-1,y+h-1).
+}

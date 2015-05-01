@@ -5,7 +5,8 @@ function open_window_manager{
 
 	local process is list(
 		make_process_system_struct(
-			get_window_list(os_data),"update_window_manager",0
+			get_window_list(os_data),"update_window_manager",0,
+			"Window manager"
 		),
 		os_data,ag6,ag7,ag8,ag9,ag10,get_window_tree(os_data):copy(),
 		list(0),"x"
@@ -174,7 +175,6 @@ function update_window_manager{
 	if ag10<>old_ag10{
 		//change selected window
 		local finished is change_selected_window(current_window,div).
-		log current_window:dump to "log2".
 		if finished{
 			resize_windows(os_data).
 			kill_process(process).

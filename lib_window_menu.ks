@@ -7,7 +7,8 @@ function open_window_menu{
 		list_of_windows,
 		window_index,
 		title,
-		list_of_names.
+		list_of_names,
+		return_index. //if true, returns index, otherwise value in list
 
 	local current_option is 0.
 	local len is list_of_names:length().
@@ -17,9 +18,10 @@ function open_window_menu{
 	local last_sel is ag9.
 	local process is list(
 		make_process_system_struct(
-			list_of_windows,"update_window_menu",window_index
+			list_of_windows,"update_window_menu",window_index,"Menu"
 		),
-		current_option,last_up,last_down,last_sel,list_of_names,title
+		current_option,last_up,last_down,last_sel,list_of_names,title,
+		return_index
 	).
 	return process.
 }
@@ -90,7 +92,13 @@ function update_window_menu{
 		set process[1] to current_option.
 	}
 	else if ag9<>last_sel{
+		local return_index is process[7].
 		kill_process(process).//suicide
-		return process[5][current_option].
+		if return_index{
+			return current_option.
+		}
+		else{
+			return process[5][current_option].
+		}
 	}
 }

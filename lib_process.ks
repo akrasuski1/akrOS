@@ -4,7 +4,7 @@
 //and, as a second element, process internal variables list.
 //System info:
 //[0] - Process_finished (bool)
-//[1] - List_of_all_windows (list)
+//[1] - os_data (list)
 //[2] - Update_function (string)
 //[3] - Please_redraw (bool)
 //[4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
@@ -18,7 +18,8 @@ function process_finished{
 
 function get_process_window{
 	parameter process.
-	return process[0][1][process[0][4]].
+	local wl is get_window_list(process[0][1]).
+	return wl[process[0][4]].
 }
 
 function get_process_update_function{
@@ -33,12 +34,18 @@ function process_needs_redraw{
 
 function is_process_gui{
 	parameter process.
-	return process[0][4]>=0 and process[0][4]<process[0][1]:length.
+	return process[0][4]>=0 and 
+		process[0][4]<get_window_list(process[0][1]):length.
 }
 
 function get_process_name{
 	parameter process.
 	return process[0][5].
+}
+
+function has_focus{
+	parameter process.
+	return process[0][4]=get_focused_window(process[0][1]).
 }
 
 //SET:
@@ -76,13 +83,13 @@ function set_process_name{
 //OTHER:
 function make_process_system_struct{
 	parameter
-		list_of_windows,
+		os_data,
 		update_function,
 		window_index,
 		name.
 	return list(
 		false, // not finished yet
-		list_of_windows,
+		os_data,
 		update_function,
 		true, // redraw needed
 		window_index,
@@ -107,7 +114,7 @@ function update_all_processes{
 		if process_finished(proc){
 			process_list:remove(i).
 			if is_process_gui(proc){
-				draw_empty_window(get_process_window(proc)).
+				draw_empty_background(get_process_window(proc)).
 			}
 		}
 		else{

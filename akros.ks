@@ -78,12 +78,15 @@ function resize_windows{
 		make_rect(0,0,terminal:width,terminal:height-2)
 	).
 	for wnd in get_window_list(os_data){
-		draw_empty_window(wnd). //draw both bg and outline
+		draw_empty_window(wnd).
 	}
+	for wnd in get_window_list(os_data){
+		draw_window_corners(wnd).
+	}
+	update_focus(os_data,0).
 	for proc in get_process_list(os_data){
 		invalidate_process_window(proc).
 	}
-	update_focus(os_data,0).
 }
 
 set window_tree to list( //this is just initial window tree - we need

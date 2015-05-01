@@ -4,12 +4,12 @@ run lib_navball. // for compass
 
 function open_window_vessel_stats{
 	parameter 
-		list_of_windows,
+		os_data,
 		window_index.
 
 	local process is list(
 		make_process_system_struct(
-			list_of_windows,"update_window_vessel_stats",window_index,
+			os_data,"update_window_vessel_stats",window_index,
 			"Vessel stats"
 		)
 	).
@@ -59,6 +59,9 @@ function update_window_vessel_stats{
 		return 0. //no point of drawing stuff if I'm backgrounded
 	}
 	local wnd is get_process_window(process).
+
+	print "FOCUS: "+has_focus(process)+" " at(wnd[0]+2,wnd[1]+16).
+
 	print round(ship:geoposition:lat,5) at(wnd[0]+12,wnd[1]+4).
 	print round(ship:geoposition:lng,5) at(wnd[0]+13,wnd[1]+5).
 	print round(compass_for(ship),5)    at(wnd[0]+11,wnd[1]+6).

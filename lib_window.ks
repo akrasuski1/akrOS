@@ -117,3 +117,11 @@ function draw_window_corners{
 	print "+" at(x+w-1,y).
 	print "+" at(x+w-1,y+h-1).
 }
+
+function draw_window_number{
+	parameter
+		rect,
+		number.
+
+	print "["+number+"]" at(rect[0]+1,rect[1]).
+}

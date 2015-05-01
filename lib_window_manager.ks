@@ -8,11 +8,13 @@ function open_window_manager{
 			os_data,"update_window_manager",0,"Window manager"
 		),
 		os_data,ag6,ag7,ag8,ag9,ag10,get_window_tree(os_data):copy(),
-		list(0),"x"
+		list(0),"x",0
 	).
 	set_showing_focused_window(os_data,false).
 	set os_data[0] to list("x").
 	resize_windows(os_data).
+	local wl is get_window_list(os_data).
+	set process[10] to wl[0].
 	return process.
 }
 
@@ -32,6 +34,54 @@ function draw_window_manager{
 	print "6 - revert and quit" at(window[0]+2,window[1]+6).
 
 	//TODO mark current window somehow
+	draw_window_manager_selection(
+		get_window_tree(process[1]),
+		process[10],process[8],0
+	).
+}
+
+function draw_window_manager_selection{ //this ugly thing is pretty much
+	parameter //copied from main file, with some changes. If any
+		divided_window,//calculation details of window placement change,
+		window,//this function would be outdated
+		window_choice,
+		depth. 
+	
+	if window_choice[depth]=0{
+		draw_focused_window_outline(window).
+	}
+	else if divided_window[0]="v"{
+		local first_window_share is round(window[2]*divided_window[1]).
+		local wnd1 is window:copy().
+		set wnd1[2] to first_window_share.
+		if window_choice[depth]=1{
+			draw_window_manager_selection(divided_window[2],
+				wnd1,window_choice,depth+1).
+		}
+		else{
+			local wnd2 is wnd1:copy().
+			set wnd2[0] to wnd1[0]+wnd1[2]-1.
+			set wnd2[2] to window[2]-wnd1[2]+1.
+			draw_window_manager_selection(divided_window[3],
+				wnd2,window_choice,depth+1).
+		}
+	}
+	else if divided_window[0]="h"{
+		local first_window_share is round(window[3]*divided_window[1]).
+		local wnd1 is window:copy().
+		set wnd1[3] to first_window_share.
+		if window_choice[depth]=1{
+			draw_window_manager_selection(divided_window[2],
+				wnd1,window_choice,depth+1).
+		}
+		else{
+			local wnd2 is wnd1:copy().
+			set wnd2[1] to wnd1[1]+wnd1[3]-1.
+			set wnd2[3] to window[3]-wnd1[3]+1.
+			draw_window_manager_selection(divided_window[3],
+				wnd2,window_choice,depth+1).
+		}
+	}
 }
 
 function change_window_properties{
@@ -40,19 +90,16 @@ function change_window_properties{
 		current_window,
 		fraction, //Change by selected amount
 		division, //Change cyclically "x"->"v"->"h"->"x"
-		cnt. //internal; call with 0
+		depth. //internal; call with 0
 	
-	if current_window[cnt]=0{
+	if current_window[depth]=0{
 		//update THIS window
 		if division{
 			if window_tree[0]="x"{
 				set window_tree[0] to "v".
-				print "Y" at(50,50).
 				until window_tree:length()>3{
-					print window_tree:length at(50,51).
 					window_tree:add(0.5).
 				}
-				print window_tree:length at(50,52).
 				set window_tree[2] to list("x").
 				set window_tree[3] to list("x").
 			}
@@ -70,13 +117,13 @@ function change_window_properties{
 			window_tree[1] + fraction)).
 	}
 	else{
-		if current_window[cnt]=1{
+		if current_window[depth]=1{
 			change_window_properties(window_tree[2],current_window,
-				fraction,division,cnt+1).
+				fraction,division,depth+1).
 		}
 		else{
 			change_window_properties(window_tree[3],current_window,
-				fraction,division,cnt+1).
+				fraction,division,depth+1).
 		}
 	}
 }

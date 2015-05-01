@@ -57,10 +57,7 @@ function resize_windows{
 	).
 	for wnd in get_window_list(os_data){
 		draw_empty_window(wnd).
-		log "asd" to "log1".
 	}
-	log get_window_list(os_data):dump() to "log1".
-	log get_window_tree(os_data):dump() to "tree".
 	for proc in get_process_list(os_data){
 		invalidate_process_window(proc).
 	}

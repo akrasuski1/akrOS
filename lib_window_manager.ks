@@ -5,12 +5,12 @@ function open_window_manager{
 
 	local process is list(
 		make_process_system_struct(
-			get_window_list(os_data),"update_window_manager",0,
-			"Window manager"
+			os_data,"update_window_manager",0,"Window manager"
 		),
 		os_data,ag6,ag7,ag8,ag9,ag10,get_window_tree(os_data):copy(),
 		list(0),"x"
 	).
+	set_showing_focused_window(os_data,false).
 	set os_data[0] to list("x").
 	resize_windows(os_data).
 	return process.
@@ -177,6 +177,7 @@ function update_window_manager{
 		local finished is change_selected_window(current_window,div).
 		if finished{
 			resize_windows(os_data).
+			set_showing_focused_window(os_data,true).
 			kill_process(process).
 			return 0.
 		}

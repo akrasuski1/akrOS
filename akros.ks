@@ -56,14 +56,21 @@ function update_focus{
 	set current to mod(current,get_window_list(os_data):length()).
 	if old<>current and 
 		get_showing_focused_window(os_data) and
-		old<get_window_list(os_data):length(){ //this is a check if
-		draw_window_outline(get_window_list(os_data)[//number of windows
-			get_focused_window(os_data)// changed meanwhile
-		]).
+		old<get_window_list(os_data):length(){
+
+		local wnd is get_window_list(os_data)[get_focused_window(os_data)].
+		draw_window_outline(wnd).
+		draw_window_corners(wnd).
 	}
 	set_focused_window(os_data,current).
 	if get_showing_focused_window(os_data){
-		draw_focused_window_outline(get_window_list(os_data)[current]).
+		draw_focused_window_outline(
+			get_window_list(os_data)[current]).
+	}
+	local i is 0.
+	for wnd in get_window_list(os_data){
+		draw_window_number(wnd,i).
+		set i to i+1.
 	}
 }
 

@@ -5,7 +5,8 @@ function open_window_akros_main_menu{
 
 	local process is list(
 		make_process_system_struct(
-			get_window_list(os_data),"update_window_akros_main_menu",0
+			get_window_list(os_data),"update_window_akros_main_menu",0,
+			"Main menu"
 		),
 		"title_screen",ag1,"child_proc_place","reserved","reserved",
 		"selected_program",os_data
@@ -50,7 +51,18 @@ function update_window_akros_main_menu{
 	set process[2] to ag1.
 	local current_ag1 is process[2].
 	local os_data is process[7].
+	local child_process is process[3].
 	
+	local child_return is 0.
+	if run_mode="program_selection" or run_mode="window_selection"
+		or run_mode="waiting_for_foreground"{
+		if process_needs_redraw(process){ // pass redraw event to child
+			invalidate_process_window(child_process).
+			validate_process_window(process).
+		}
+		set child_return to update_process(child_process).
+	}
+
 	if run_mode="title_screen"{
 		if process_needs_redraw(process){
 			draw_window_akros_main_menu(process).
@@ -69,19 +81,15 @@ function update_window_akros_main_menu{
 				get_window_list(os_data),
 				0,
 				"Select program:",
-				options
+				options,
+				false
 			).
 			set process[3] to child_process.
 		}
 	}
 	else if run_mode="program_selection"{
-		local child_process is process[3].
-		if process_needs_redraw(process){ // pass redraw event to child
-			invalidate_process_window(child_process).
-			validate_process_window(process).
-		}
-		local selection is update_process(child_process).
 		if process_finished(child_process){
+			local selection is child_return.
 			draw_empty_window(wnd).
 			if selection="Quit akrOS"{
 				local all_proc is get_process_list(os_data).
@@ -111,7 +119,7 @@ function update_window_akros_main_menu{
 				}
 				lw:add("Background").
 				set child_process to open_window_menu(
-					get_window_list(os_data),0,"Select window",lw
+					get_window_list(os_data),0,"Select window",lw,false
 				).
 				set process[1] to "window_selection".
 				set process[3] to child_process.
@@ -120,13 +128,8 @@ function update_window_akros_main_menu{
 		}
 	}
 	else if run_mode="window_selection"{
-		local child_process is process[3].
-		if process_needs_redraw(process){ // pass redraw event to child
-			invalidate_process_window(child_process).
-			validate_process_window(process).
-		}
-		local selection is update_process(child_process).
 		if process_finished(child_process){
+			local selection is child_return.
 			if selection="Background"{
 				set selection to -1.
 			}
@@ -149,26 +152,12 @@ function update_window_akros_main_menu{
 		}
 	}
 	else if run_mode="waiting_for_foreground"{
-		local child_process is process[3].
-		if process_needs_redraw(process){ // pass redraw event to child
-			invalidate_process_window(child_process).
-			validate_process_window(process).
-		}
-		update_process(child_process).
 		if process_finished(child_process){
 			set wnd to get_process_window(process). //need to reset in
 			//case child changed windows (i.e. window manager)
 			draw_empty_window(wnd).
 			invalidate_process_window(process).
 			set process[1] to "title_screen".
-		}
-		else if current_ag1<>last_ag1{
-			//this is fail-safe check to enable menu even if
-			//user turns on non-interactive process on window 0.
-			//On ag1, it is immediately killed.
-			set process[1] to "title_screen".
-			draw_empty_window(wnd).
-			invalidate_process_window(process).
 		}
 	}
 }

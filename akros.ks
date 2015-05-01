@@ -45,6 +45,28 @@ function reset_window_list{
 	}
 }
 
+function update_focus{
+	parameter
+		os_data,
+		shift_by.
+	
+	local current is get_focused_window(os_data).
+	local old is current.
+	set current to current+shift_by+get_window_list(os_data):length().
+	set current to mod(current,get_window_list(os_data):length()).
+	if old<>current and 
+		get_showing_focused_window(os_data) and
+		old<get_window_list(os_data):length(){ //this is a check if
+		draw_window_outline(get_window_list(os_data)[//number of windows
+			get_focused_window(os_data)// changed meanwhile
+		]).
+	}
+	set_focused_window(os_data,current).
+	if get_showing_focused_window(os_data){
+		draw_focused_window_outline(get_window_list(os_data)[current]).
+	}
+}
+
 function resize_windows{
 	parameter os_data.
 
@@ -56,11 +78,12 @@ function resize_windows{
 		make_rect(0,0,terminal:width,terminal:height-2)
 	).
 	for wnd in get_window_list(os_data){
-		draw_empty_window(wnd).
+		draw_empty_window(wnd). //draw both bg and outline
 	}
 	for proc in get_process_list(os_data){
 		invalidate_process_window(proc).
 	}
+	update_focus(os_data,0).
 }
 
 set window_tree to list( //this is just initial window tree - we need
@@ -74,7 +97,7 @@ set window_tree to list( //this is just initial window tree - we need
 // kept in the second field of the list. The last two fields represent 
 // child windows recursively.
 
-set os_data to list(window_tree,list(),list()).
+set os_data to list(window_tree,list(),list(),0,true).
 
 get_process_list(os_data):add(
 	open_window_akros_main_menu(os_data)
@@ -82,7 +105,27 @@ get_process_list(os_data):add(
 
 set old_terminal_width to -1.
 set old_terminal_height to -1.
+set old_ag1 to ag1.
+set old_ag2 to ag2.
+set old_showing_focus to get_showing_focused_window(os_data).
 until get_process_list(os_data):length()=0{
+	local change_focus is 0.
+	if ag1<>old_ag1{
+		set old_ag1 to ag1.
+		set change_focus to change_focus-1.
+	}
+	if ag2<>old_ag2{
+		set old_ag2 to ag2.
+		set change_focus to change_focus+1.
+	}
+	local force_focus is false.
+	if get_showing_focused_window(os_data)<>old_showing_focus{
+		set old_showing_focus to get_showing_focused_window(os_data).
+		set force_focus to true.
+	}
+	if change_focus<>0 or force_focus{
+		update_focus(os_data,change_focus).
+	}
 	if terminal:width<>old_terminal_width or
 		terminal:height<>old_terminal_height{
 

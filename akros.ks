@@ -4,8 +4,8 @@ run lib_process.
 run lib_window.
 run job_main_menu.
 run job_menu.
-run job_window_manager.
 run lib_exec.
+
 // User defined programs:
 run program_list.
 
@@ -107,7 +107,10 @@ set window_tree to list( //this is just initial window tree - we need
 // kept in the second field of the list. The last two fields represent 
 // child windows recursively.
 
-set os_data to list(window_tree,list(),list(),0,true).
+set os_data to new_os_data().
+set os_data[0] to window_tree.
+
+install_programs(os_data).
 
 get_process_list(os_data):add(
 	run_main_menu(os_data)

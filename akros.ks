@@ -62,6 +62,7 @@ function update_focus{
 		draw_window_outline(wnd).
 		draw_window_corners(wnd).
 	}
+	draw_status_bar(os_data).
 	set_focused_window(os_data,current).
 	if get_showing_focused_window(os_data){
 		draw_focused_window_outline(
@@ -71,6 +72,16 @@ function update_focus{
 	for wnd in get_window_list(os_data){
 		draw_window_number(wnd,i).
 		set i to i+1.
+	}
+	local focused_proc is 0.
+	for proc in get_process_list(os_data){
+		if has_focus(proc){
+			set focused_proc to proc.
+			break.
+		}
+	}
+	if focused_proc<>0{
+		invalidate_process_status(focused_proc).
 	}
 }
 
@@ -82,7 +93,7 @@ function resize_windows{
 	reset_window_list(
 		get_window_list(os_data),
 		get_window_tree(os_data),
-		make_rect(0,0,terminal:width,terminal:height-2)
+		make_rect(0,0,terminal:width,terminal:height-get_status_height(os_data)-2)
 	).
 	for wnd in get_window_list(os_data){
 		draw_empty_window(wnd).

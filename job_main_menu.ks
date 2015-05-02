@@ -20,6 +20,14 @@ function draw_main_menu{
 	if not is_process_gui(process){
 		return 0.
 	}
+	
+	local run_mode is process[1].
+	local child_process is process[3].
+	if run_mode<>"title_screen"{
+		invalidate_process_window(child_process). //pass redraw to child
+		validate_process_window(process).
+		return 0.
+	}
 
 	local window is get_process_window(process).
 	local x is window[0].
@@ -45,6 +53,28 @@ function draw_main_menu{
 	validate_process_window(process).
 }
 
+function draw_main_menu_status{
+	parameter process.
+	
+	if not has_focus(process){
+		return 0.
+	}
+
+	local run_mode is process[1].
+	if run_mode<>"title_screen"{
+		local child_process is process[3].
+		invalidate_process_status(child_process).
+	}
+	else{
+		local status_bar is get_status_window(os_data).
+		local x is status_bar[0].
+		local y is status_bar[1].
+		print "Press 9 to start." at(x+2,y+2).
+		print "1 and 2 switches window focus." at(x+2,y+3).
+	}
+	validate_process_status(process).
+}
+
 function update_main_menu{
 	parameter process.
 	
@@ -59,27 +89,24 @@ function update_main_menu{
 	set process[2] to ag9.
 	local changed_ag9 is old_ag9<>process[2].
 
-
 	
 	if old_ag9="ag9" or not has_focus(process){
 		set changed_ag9 to false.
 	}
 	
+	if process_needs_redraw(process){
+		draw_main_menu(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_main_menu_status(process).
+	}
+	
 	local child_return is 0.
-	if run_mode="program_selection" or run_mode="window_selection"
-		or run_mode="waiting_for_foreground"{
-		if process_needs_redraw(process){ // pass redraw event to child
-			invalidate_process_window(child_process).
-			validate_process_window(process).
-		}
+	if run_mode<>"title_screen"{//update child if needed
 		set child_return to update_process(child_process).
 	}
 
 	if run_mode="title_screen"{
-		if process_needs_redraw(process){
-			draw_main_menu(process).
-		}
-
 		if changed_ag9{
 			draw_empty_background(wnd).
 			set run_mode to "program_selection".
@@ -93,6 +120,7 @@ function update_main_menu{
 				options,
 				false
 			).
+			draw_empty_background(get_status_window(os_data)).
 		}
 	}
 	else if run_mode="program_selection"{
@@ -171,6 +199,8 @@ function update_main_menu{
 
 	if process[1]<>run_mode and run_mode="title_screen"{
 		set process[2] to "ag9".//disable accidental double click by preventing click on first frame
+		draw_empty_background(get_status_window(os_data)). //need to clean status after child
+		invalidate_process_status(process). //redraw status on title
 	}
 	set process[1] to run_mode.
 	set process[3] to child_process.

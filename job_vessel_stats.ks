@@ -15,7 +15,8 @@ function run_vessel_stats{
 		make_process_system_struct(
 			os_data,"update_vessel_stats",window_index,
 			"Vessel stats"
-		)
+		),
+		"ag9"
 	).
 	return process.
 }
@@ -30,8 +31,10 @@ function draw_vessel_stats_status{
 	local status is get_status_window(get_process_os_data(process)).
 	local x is status[0].
 	local y is status[1].
+	local w is status[2].
 
 	print "This window shows important vessel stats." at (x+2,y+2).
+	print "Press 9 to quit." at (x+w-17,y+3).
 	validate_process_status(process).
 }
 
@@ -82,6 +85,20 @@ function update_vessel_stats{
 	if not is_process_gui(process){
 		return 0. //no point of drawing stuff if I'm backgrounded
 	}
+
+	local old_ag9 is process[1].
+	set process[1] to ag9.
+	local changed_ag9 is old_ag9<>process[1].
+
+	if old_ag9="ag9" or not has_focus(process){
+		set changed_ag9 to false.
+	}
+
+	if changed_ag9{
+		kill_process(process).
+		return 0.
+	}
+
 	local wnd is get_process_window(process).
 	local x is wnd[0].
 	local y is wnd[1].

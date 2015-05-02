@@ -20,6 +20,21 @@ function run_vessel_stats{
 	return process.
 }
 
+function draw_vessel_stats_status{
+	parameter process.
+
+	if not has_focus(process){
+		return 0.
+	}
+	
+	local status is get_status_window(get_process_os_data(process)).
+	local x is status[0].
+	local y is status[1].
+
+	print "This window shows important vessel stats." at (x+2,y+2).
+	validate_process_status(process).
+}
+
 function draw_vessel_stats{
 	parameter process.
 
@@ -60,6 +75,9 @@ function update_vessel_stats{
 
 	if process_needs_redraw(process){
 		draw_vessel_stats(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_vessel_stats_status(process).
 	}
 	if not is_process_gui(process){
 		return 0. //no point of drawing stuff if I'm backgrounded

@@ -1,18 +1,20 @@
 @lazyglobal off.
 
-function open_window_akros_main_menu{
+function run_main_menu{
 	parameter os_data.
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_window_akros_main_menu",0,"Main menu"
+			os_data,"update_main_menu",0,"Main menu"
 		),
 		"title_screen","ag9","child_process","program_selection"
 	).
 	return process.
+	// main menu always runs in window 0 - otherwise it could get
+	// accidentally backgrounded by window manager
 }
 
-function draw_window_akros_main_menu{
+function draw_main_menu{
 	parameter process.
 	
 	if not is_process_gui(process){
@@ -43,7 +45,7 @@ function draw_window_akros_main_menu{
 	validate_process_window(process).
 }
 
-function update_window_akros_main_menu{
+function update_main_menu{
 	parameter process.
 	
 	//restore state:
@@ -75,7 +77,7 @@ function update_window_akros_main_menu{
 
 	if run_mode="title_screen"{
 		if process_needs_redraw(process){
-			draw_window_akros_main_menu(process).
+			draw_main_menu(process).
 		}
 
 		if changed_ag9{
@@ -84,7 +86,7 @@ function update_window_akros_main_menu{
 			local options is get_program_list().
 			options:add("Back").
 			options:add("Quit akrOS").
-			set child_process to open_window_menu(
+			set child_process to run_menu(
 				os_data,
 				0,
 				"Select program:",
@@ -106,10 +108,10 @@ function update_window_akros_main_menu{
 				}
 				return 0.
 			}
-			else if program_selection="Window manager"{
+			else if is_system_program(program_selection){
 				local other_process is make_process_from_name(
 					os_data,program_selection,0
-				). //run in 0 w/o asking
+				). //run in window 0 w/o asking
 				set child_process to other_process.
 				set run_mode to "waiting_for_foreground".
 			}
@@ -126,7 +128,7 @@ function update_window_akros_main_menu{
 					set i to i+1.
 				}
 				lw:add("Background").
-				set child_process to open_window_menu(
+				set child_process to run_menu(
 					os_data,0,"Select window",lw,false
 				).
 				set run_mode to "window_selection".

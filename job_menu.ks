@@ -23,6 +23,23 @@ function run_menu{
 	return process.
 }
 
+function draw_menu_status{
+	parameter process.
+
+	if not has_focus(process){
+		return 0.
+	}
+	
+	local status is get_status_window(get_process_os_data(process)).
+	local x is status[0].
+	local y is status[1].
+
+	print "AG7 - up" at (x+2,y+1).
+	print "AG8 - down" at (x+2,y+2).
+	print "AG9 - select" at (x+2,y+3).
+	validate_process_status(process).
+}
+
 function draw_menu{
 	parameter process.
 
@@ -84,6 +101,9 @@ function update_menu{
 
 	if process_needs_redraw(process){
 		draw_menu(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_menu_status(process).
 	}
 
 	if changed_ag7{

@@ -9,6 +9,7 @@
 //[3] - Please_redraw (bool)
 //[4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
 //[5] - Proces name (string)
+//[6] - Please redraw status (bool)
 
 //GET:
 function process_finished{
@@ -43,6 +44,11 @@ function get_process_name{
 	return process[0][5].
 }
 
+function process_status_needs_redraw{
+	parameter process.
+	return process[0][6].
+}
+
 function has_focus{
 	parameter process.
 	return process[0][4]=get_focused_window(process[0][1]).
@@ -67,6 +73,16 @@ function invalidate_process_window{
 function validate_process_window{
 	parameter process.
 	set process[0][3] to false.
+}
+
+function invalidate_process_status{
+	parameter process.
+	set process[0][6] to true.
+}
+
+function validate_process_status{
+	parameter process.
+	set process[0][6] to false.
 }
 
 function change_process_window{
@@ -98,7 +114,8 @@ function make_process_system_struct{
 		update_function,
 		true, // redraw needed
 		window_index,
-		name
+		name,
+		true // status redraw needed (check if has focus though!)
 	).
 }
 

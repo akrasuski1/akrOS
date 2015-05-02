@@ -2,21 +2,21 @@
 
 run lib_navball. // for compass
 
-function open_window_vessel_stats{
+function run_vessel_stats{
 	parameter 
 		os_data,
 		window_index.
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_window_vessel_stats",window_index,
+			os_data,"update_vessel_stats",window_index,
 			"Vessel stats"
 		)
 	).
 	return process.
 }
 
-function draw_window_vessel_stats{
+function draw_vessel_stats{
 	parameter process.
 
 	if not is_process_gui(process){
@@ -51,11 +51,11 @@ function bool_to_on_off{
 	}
 }
 
-function update_window_vessel_stats{
+function update_vessel_stats{
 	parameter process.
 
 	if process_needs_redraw(process){
-		draw_window_vessel_stats(process).
+		draw_vessel_stats(process).
 	}
 	if not is_process_gui(process){
 		return 0. //no point of drawing stuff if I'm backgrounded

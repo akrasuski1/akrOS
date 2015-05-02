@@ -11,6 +11,7 @@
 //    [1] - list of run program functions
 //    [2] - list of booleans stating whether it is 
 //          system program (runs always in window 0)
+// [6] - status bar height (internal)
 
 function get_window_tree{
 	parameter os_data.
@@ -37,6 +38,21 @@ function get_showing_focused_window{
 	return os_data[4].
 }
 
+function get_status_height{
+	parameter os_data.
+	return os_data[6].
+}
+
+function get_status_window{
+	parameter os_data.
+	return make_rect(0,terminal:height()-os_data[6]-3,terminal:width(),os_data[6]+2).
+}
+
+function draw_status_bar{
+	parameter os_data.
+	draw_empty_window(get_status_window(os_data)).
+}
+
 function new_os_data{
 	return list(
 		list(),
@@ -44,7 +60,8 @@ function new_os_data{
 		list(),
 		0,
 		true,
-		list(list(),list(),list())
+		list(list(),list(),list()),
+		3
 	).
 }
 

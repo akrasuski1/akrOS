@@ -2,7 +2,7 @@
 // select one of the options and return it to calling script.
 @lazyglobal off.
 
-function open_window_menu{
+function run_menu{
 	parameter
 		os_data,
 		window_index,
@@ -15,7 +15,7 @@ function open_window_menu{
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_window_menu",window_index,"Menu"
+			os_data,"update_menu",window_index,"Menu"
 		),
 		current_option,"ag7","ag8","ag9",list_of_names,title,
 		return_index
@@ -23,7 +23,7 @@ function open_window_menu{
 	return process.
 }
 
-function draw_window_menu{
+function draw_menu{
 	parameter process.
 
 	if not is_process_gui(process){
@@ -50,7 +50,7 @@ function draw_window_menu{
 	validate_process_window(process).
 }
 
-function update_window_menu{
+function update_menu{
 	parameter process.
 
 	//restore state:
@@ -83,7 +83,7 @@ function update_window_menu{
 
 
 	if process_needs_redraw(process){
-		draw_window_menu(process).
+		draw_menu(process).
 	}
 
 	if changed_ag7{

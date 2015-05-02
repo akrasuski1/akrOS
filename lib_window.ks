@@ -16,20 +16,20 @@ function draw_empty_window{
 	local w is rect[2].
 	local h is rect[3].
 	local top_str is "+".
-	local side_str is "|".
+	local middle_str is "|".
 	local i is 0.
 	until i>=w-2{
 		set top_str to top_str+"=".
-		set side_str to side_str+" ".
+		set middle_str to middle_str+" ".
 		set i to i+1.
 	}
 	set top_str to top_str+"+".
-	set side_str to side_str+"|".
+	set middle_str to middle_str+"|".
 	print top_str at(x,y).
 	print top_str at(x,y+h-1).
 	set i to 1.
 	until i>=h-1{
-		print side_str at(x,y+i).
+		print middle_str at(x,y+i).
 		set i to i+1.
 	}
 }
@@ -41,16 +41,16 @@ function draw_empty_background{
 	local y is rect[1].
 	local w is rect[2].
 	local h is rect[3].
-	local side_str is "".
+	local middle_str is "".
 	local i is 0.
 	until i>=w-2{
-		set side_str to side_str+" ".
+		set middle_str to middle_str+" ".
 		set i to i+1.
 	}
-	set side_str to side_str+"".
+	set middle_str to middle_str+"".
 	set i to 1.
 	until i>=h-1{
-		print side_str at(x+1,y+i).
+		print middle_str at(x+1,y+i).
 		set i to i+1.
 	}
 }

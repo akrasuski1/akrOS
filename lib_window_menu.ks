@@ -13,14 +13,11 @@ function open_window_menu{
 	local current_option is 0.
 	local len is list_of_names:length().
 
-	local last_up is ag7.
-	local last_down is ag8.
-	local last_sel is ag9.
 	local process is list(
 		make_process_system_struct(
 			os_data,"update_window_menu",window_index,"Menu"
 		),
-		current_option,last_up,last_down,last_sel,list_of_names,title,
+		current_option,"ag7","ag8","ag9",list_of_names,title,
 		return_index
 	).
 	return process.
@@ -48,7 +45,7 @@ function draw_window_menu{
 		set i to i+1.
 	}
 	print "7/8/9 - up/down/select" at(x+2,y+len+5).
-	//TODO: what if options dont fit on window? Scroll!
+	//TODO: what if options dont fit on window? "[ ] Next page"
 	print "*" at(x+3,y+4+current_option).
 	validate_process_window(process).
 }
@@ -56,20 +53,40 @@ function draw_window_menu{
 function update_window_menu{
 	parameter process.
 
+	//restore state:
 	local window is get_process_window(process).
 	local x is window[0].
 	local y is window[1].
 	local current_option is process[1].
-	local last_up is process[2].
-	local last_down is process[3].
-	local last_sel is process[4].
-	local len is process[5]:length().
+	local list_of_names is process[5].
+	local len is list_of_names:length().
+	local return_index is process[7].
+	//input:
+	local old_ag7 is process[2].
+	set process[2] to ag7.
+	local changed_ag7 is old_ag7<>process[2].
+
+	local old_ag8 is process[3].
+	set process[3] to ag8.
+	local changed_ag8 is old_ag8<>process[3].
 	
+	local old_ag9 is process[4].
+	set process[4] to ag9.
+	local changed_ag9 is old_ag9<>process[4].
+
+	if old_ag7="ag7" or not has_focus(process){
+		set changed_ag7 to false.
+		set changed_ag8 to false.
+		set changed_ag9 to false.
+	}
+
+
+
 	if process_needs_redraw(process){
 		draw_window_menu(process).
 	}
 
-	if ag7<>last_up{
+	if changed_ag7{
 		if is_process_gui(process){
 			print " " at(x+3,y+4+current_option).
 		}
@@ -77,10 +94,8 @@ function update_window_menu{
 		if is_process_gui(process){
 			print "*" at(x+3,y+4+current_option).
 		}
-		set process[2] to ag7.
-		set process[1] to current_option.
 	}
-	else if ag8<>last_down{
+	else if changed_ag8{
 		if is_process_gui(process){
 			print " " at(x+3,y+4+current_option).
 		}
@@ -88,17 +103,17 @@ function update_window_menu{
 		if is_process_gui(process){
 			print "*" at(x+3,y+4+current_option).
 		}
-		set process[3] to ag8.
-		set process[1] to current_option.
 	}
-	else if ag9<>last_sel{
-		local return_index is process[7].
+	else if changed_ag9{
 		kill_process(process).//suicide
 		if return_index{
 			return current_option.
 		}
 		else{
-			return process[5][current_option].
+			return list_of_names[current_option].
 		}
 	}
+
+	//save
+	set process[1] to current_option.
 }

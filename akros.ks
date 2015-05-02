@@ -2,12 +2,12 @@
 run lib_os_data.
 run lib_process.
 run lib_window.
-run lib_window_akros_main_menu.
-run lib_window_menu.
-run lib_window_manager.
+run job_main_menu.
+run job_menu.
+run job_window_manager.
 run lib_exec.
 // User defined programs:
-run gui_programs.
+run program_list.
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
 
@@ -110,7 +110,7 @@ set window_tree to list( //this is just initial window tree - we need
 set os_data to list(window_tree,list(),list(),0,true).
 
 get_process_list(os_data):add(
-	open_window_akros_main_menu(os_data)
+	run_main_menu(os_data)
 ).
 
 set old_terminal_width to -1.

@@ -83,7 +83,7 @@ function update_main_menu{
 		if changed_ag9{
 			draw_empty_background(wnd).
 			set run_mode to "program_selection".
-			local options is get_program_list().
+			local options is get_program_list(os_data).
 			options:add("Back").
 			options:add("Quit akrOS").
 			set child_process to run_menu(
@@ -108,7 +108,7 @@ function update_main_menu{
 				}
 				return 0.
 			}
-			else if is_system_program(program_selection){
+			else if is_system_program(os_data,program_selection){
 				local other_process is make_process_from_name(
 					os_data,program_selection,0
 				). //run in window 0 w/o asking

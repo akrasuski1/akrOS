@@ -48,6 +48,11 @@ function has_focus{
 	return process[0][4]=get_focused_window(process[0][1]).
 }
 
+function get_process_os_data{
+	parameter process.
+	return process[0][1].
+}
+
 //SET:
 function kill_process{
 	parameter process.

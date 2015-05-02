@@ -24,19 +24,21 @@ function draw_window_vessel_stats{
 	}
 
 	local window is get_process_window(process).
+	local x is window[0].
+	local y is window[1].
 
-	print "Vessel stats:" at(window[0]+2,window[1]+2).
-	print "Latitude: " at(window[0]+2,window[1]+4).
-	print "Longitude: " at(window[0]+2,window[1]+5).
-	print "Compass: " at(window[0]+2,window[1]+6).
-	print "Mass: " at(window[0]+2,window[1]+7).
-	print "Name: " at(window[0]+2,window[1]+8).
-	print "Time: " at(window[0]+2,window[1]+9).
-	print "SAS: " at(window[0]+2,window[1]+10).
-	print "RCS: " at(window[0]+2,window[1]+11).
-	print "GEAR: " at(window[0]+2,window[1]+12).
-	print "LIGHTS: " at(window[0]+2,window[1]+13).
-	print "PANELS: " at(window[0]+2,window[1]+14).
+	print "Vessel stats:" at(x+2,y+2).
+	print "Latitude: "    at(x+2,y+4).
+	print "Longitude: "   at(x+2,y+5).
+	print "Compass: "     at(x+2,y+6).
+	print "Mass: "        at(x+2,y+7).
+	print "Name: "        at(x+2,y+8).
+	print "Time: "        at(x+2,y+9).
+	print "SAS: "         at(x+2,y+10).
+	print "RCS: "         at(x+2,y+11).
+	print "GEAR: "        at(x+2,y+12).
+	print "LIGHTS: "      at(x+2,y+13).
+	print "PANELS: "      at(x+2,y+14).
 }
 
 function bool_to_on_off{
@@ -59,18 +61,20 @@ function update_window_vessel_stats{
 		return 0. //no point of drawing stuff if I'm backgrounded
 	}
 	local wnd is get_process_window(process).
+	local x is wnd[0].
+	local y is wnd[1].
 
 	print "FOCUS: "+has_focus(process)+" " at(wnd[0]+2,wnd[1]+16).
 
-	print round(ship:geoposition:lat,5) at(wnd[0]+12,wnd[1]+4).
-	print round(ship:geoposition:lng,5) at(wnd[0]+13,wnd[1]+5).
-	print round(compass_for(ship),5)    at(wnd[0]+11,wnd[1]+6).
-	print round(ship:mass,5)            at(wnd[0]+8, wnd[1]+7).
-	print ship:name                     at(wnd[0]+8, wnd[1]+8).
-	print time:clock                    at(wnd[0]+8, wnd[1]+9).
-	print bool_to_on_off(sas)           at(wnd[0]+7, wnd[1]+10).
-	print bool_to_on_off(rcs)           at(wnd[0]+7, wnd[1]+11).
-	print bool_to_on_off(gear)          at(wnd[0]+8, wnd[1]+12).
-	print bool_to_on_off(lights)        at(wnd[0]+10,wnd[1]+13).
-	print bool_to_on_off(panels)        at(wnd[0]+10,wnd[1]+14).
+	print round(ship:geoposition:lat,5) at(x+12,y+4).
+	print round(ship:geoposition:lng,5) at(x+13,y+5).
+	print round(compass_for(ship),5)    at(x+11,y+6).
+	print round(ship:mass,5)            at(x+8, y+7).
+	print ship:name                     at(x+8, y+8).
+	print time:clock                    at(x+8, y+9).
+	print bool_to_on_off(sas)           at(x+7, y+10).
+	print bool_to_on_off(rcs)           at(x+7, y+11).
+	print bool_to_on_off(gear)          at(x+8, y+12).
+	print bool_to_on_off(lights)        at(x+10,y+13).
+	print bool_to_on_off(panels)        at(x+10,y+14).
 }

@@ -2,9 +2,13 @@
 
 A simple operating system for kOS mod for Kerbal Space Program.
 Includes:
+
 -window management
+
 -process management
+
 -menus
+
 -example vessel stats widget
 
 Screenshot from early version:

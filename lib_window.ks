@@ -55,18 +55,20 @@ function draw_empty_background{
 	}
 }
 
-function draw_window_outline{
-	parameter rect.
-
+function draw_any_outline{
+	parameter
+		rect,
+		top_char,
+		side_char.
+	
 	local x is rect[0].
 	local y is rect[1].
 	local w is rect[2].
 	local h is rect[3].
 	local top_str is "+".
-	local side_str is "|".
 	local i is 0.
 	until i>=w-2{
-		set top_str to top_str+"=".
+		set top_str to top_str+top_char.
 		set i to i+1.
 	}
 	set top_str to top_str+"+".
@@ -74,35 +76,22 @@ function draw_window_outline{
 	print top_str at(x,y+h-1).
 	set i to 1.
 	until i>=h-1{
-		print side_str at(x,y+i).
-		print side_str at(x+w-1,y+i).
+		print side_char at(x,y+i).
+		print side_char at(x+w-1,y+i).
 		set i to i+1.
 	}
 }
 
+function draw_window_outline{
+	parameter rect.
+	
+	draw_any_outline(rect,"=","|").
+}
+
 function draw_focused_window_outline{
 	parameter rect.
-
-	local x is rect[0].
-	local y is rect[1].
-	local w is rect[2].
-	local h is rect[3].
-	local top_str is "#".
-	local side_str is "#".
-	local i is 0.
-	until i>=w-2{
-		set top_str to top_str+"#".
-		set i to i+1.
-	}
-	set top_str to top_str+"#".
-	print top_str at(x,y).
-	print top_str at(x,y+h-1).
-	set i to 1.
-	until i>=h-1{
-		print side_str at(x,y+i).
-		print side_str at(x+w-1,y+i).
-		set i to i+1.
-	}
+	
+	draw_any_outline(rect,"#","#").
 }
 
 function draw_window_corners{

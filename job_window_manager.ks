@@ -1,7 +1,13 @@
 @lazyglobal off.
 
+//add to OS
+parameter os_data.
+register_program(os_data,"Window manager","run_window_manager",true).
+
 function run_window_manager{
-	parameter os_data.
+	parameter
+		os_data,
+		window_index.//ignore this argument. Assume it's 0.
 
 	local process is list(
 		make_process_system_struct(

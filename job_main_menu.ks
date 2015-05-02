@@ -70,7 +70,7 @@ function draw_main_menu_status{
 		local x is status_bar[0].
 		local y is status_bar[1].
 		print "Press 9 to start." at(x+2,y+2).
-		print "1 and 2 switches window focus." at(x+2,y+3).
+		print "1 and 2 switch window focus." at(x+2,y+3).
 	}
 	validate_process_status(process).
 }

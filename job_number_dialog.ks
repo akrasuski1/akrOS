@@ -1,18 +1,18 @@
 @lazyglobal off.
 
-function open_window_number_dialog{
+function run_number_dialog{
 	parameter window.
 	parameter title.
 	parameter number.
 	
 	local process is list(
-		list(false, window, "update_window_number_dialog",false),
+		list(false, window, "update_number_dialog",false),
 		title,number,ag6,ag7,ag8,ag9,ag10,"      ",1).
-	draw_window_number_dialog(process).
+	draw_number_dialog(process).
 	return process.
 }
 
-function draw_window_number_dialog{
+function draw_number_dialog{
 	parameter process.
 
 	if not is_process_gui(process){
@@ -26,7 +26,7 @@ function draw_window_number_dialog{
 	print "0   - enter" at (window[0]+2, window[1]+7).
 }
 
-function update_window_number_dialog{
+function update_number_dialog{
 	parameter process.
 
 	local title is process[1].
@@ -41,7 +41,7 @@ function update_window_number_dialog{
 	local increment is process[9].
 	
 	if process_needs_redraw(process){
-		draw_window_number_dialog(process).
+		draw_number_dialog(process).
 	}
 
 	if old_enter<>ag10{

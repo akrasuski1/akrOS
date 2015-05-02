@@ -7,8 +7,7 @@ function open_window_akros_main_menu{
 		make_process_system_struct(
 			os_data,"update_window_akros_main_menu",0,"Main menu"
 		),
-		"title_screen",ag9,"child_proc_place","reserved","reserved",
-		"selected_program",os_data
+		"title_screen","ag9","child_process","program_selection"
 	).
 	return process.
 }
@@ -21,36 +20,48 @@ function draw_window_akros_main_menu{
 	}
 
 	local window is get_process_window(process).
+	local x is window[0].
+	local y is window[1].
+	local w is window[2].
+	local h is window[3].
 
-	if window[2]>=26{
-		print "aaa  k       OOOO SSSS" at(window[0]+2,window[1]+2).
-		print "  a  k       O  O S   " at(window[0]+2,window[1]+3).
-		print "aaa  k k rrr O  O SSSS" at(window[0]+2,window[1]+4).
-		print "a a  kk  r   O  O    S" at(window[0]+2,window[1]+5).
-		print "aaaa k k r   OOOO SSSS" at(window[0]+2,window[1]+6).
+	if w>=26{
+		print "aaa  k       OOOO SSSS" at(x+2,y+2).
+		print "  a  k       O  O S   " at(x+2,y+3).
+		print "aaa  k k rrr O  O SSSS" at(x+2,y+4).
+		print "a a  kk  r   O  O    S" at(x+2,y+5).
+		print "aaaa k k r   OOOO SSSS" at(x+2,y+6).
 	}
 	else{
-		print "Welcome to akrOS." at(window[0]+2,window[1]+4).
+		print "Welcome to akrOS." at(x+2,y+4).
 	}
 
-	print "Press 9 to start." at(window[0]+2,window[1]+8).
+	print "Press 9 to start." at(x+2,y+8).
 
-	print "v0.1, by akrasuski1" at(window[0]+window[2]-20,
-									window[1]+window[3]-2).
+	print "v0.1, by akrasuski1" at(x+w-20,y+h-2). //bottom right
 	
 	validate_process_window(process).
 }
 
 function update_window_akros_main_menu{
 	parameter process.
-
+	
+	//restore state:
 	local run_mode is process[1].
-	local wnd is get_process_window(process).
-	local last_ag9 is process[2].
-	set process[2] to ag9.
-	local current_ag9 is process[2].
-	local os_data is process[7].
 	local child_process is process[3].
+	local program_selection is process[4].
+	local os_data is get_process_os_data(process).
+	local wnd is get_process_window(process).
+	//input:
+	local old_ag9 is process[2].
+	set process[2] to ag9.
+	local changed_ag9 is old_ag9<>process[2].
+
+
+	
+	if old_ag9="ag9" or not has_focus(process){
+		set changed_ag9 to false.
+	}
 	
 	local child_return is 0.
 	if run_mode="program_selection" or run_mode="window_selection"
@@ -67,29 +78,26 @@ function update_window_akros_main_menu{
 			draw_window_akros_main_menu(process).
 		}
 
-		local wnd is get_process_window(process).
-
-		if current_ag9<>last_ag9{
+		if changed_ag9{
 			draw_empty_background(wnd).
-			set process[1] to "program_selection".
+			set run_mode to "program_selection".
 			local options is get_program_list().
 			options:add("Back").
 			options:add("Quit akrOS").
-			local child_process is open_window_menu(
+			set child_process to open_window_menu(
 				os_data,
 				0,
 				"Select program:",
 				options,
 				false
 			).
-			set process[3] to child_process.
 		}
 	}
 	else if run_mode="program_selection"{
 		if process_finished(child_process){
-			local selection is child_return.
+			set program_selection to child_return.
 			draw_empty_background(wnd).
-			if selection="Quit akrOS"{
+			if program_selection="Quit akrOS"{
 				local all_proc is get_process_list(os_data).
 				local i is 0.
 				until i=all_proc:length{
@@ -98,15 +106,15 @@ function update_window_akros_main_menu{
 				}
 				return 0.
 			}
-			else if selection="Window manager"{
+			else if program_selection="Window manager"{
 				local other_process is make_process_from_name(
-					os_data,selection,0
+					os_data,program_selection,0
 				). //run in 0 w/o asking
-				set process[3] to other_process.
-				set process[1] to "waiting_for_foreground".
+				set child_process to other_process.
+				set run_mode to "waiting_for_foreground".
 			}
-			else if selection="Back"{
-				set process[1] to "title_screen".
+			else if program_selection="Back"{
+				set run_mode to "title_screen".
 				invalidate_process_window(process).
 			}
 			else{
@@ -121,33 +129,31 @@ function update_window_akros_main_menu{
 				set child_process to open_window_menu(
 					os_data,0,"Select window",lw,false
 				).
-				set process[1] to "window_selection".
-				set process[3] to child_process.
-				set process[6] to selection.
+				set run_mode to "window_selection".
 			}
 		}
 	}
 	else if run_mode="window_selection"{
 		if process_finished(child_process){
-			local selection is child_return.
-			if selection="Background"{
-				set selection to -1.
+			local window_selection is child_return.
+			if window_selection="Background"{
+				set window_selection to -1.
 			}
 			draw_empty_background(wnd).
 			
 			local other_process is make_process_from_name(
-				os_data,process[6],selection
+				os_data,program_selection,window_selection
 			).
 
-			if selection<>0{ // menu is still there
+			if window_selection<>0{ // menu is still there
 				local all_proc is get_process_list(os_data).
 				all_proc:add(other_process).
 				invalidate_process_window(process).
-				set process[1] to "title_screen".
+				set run_mode to "title_screen".
 			}
 			else{ // menu must disappear to show program
-				set process[3] to other_process.
-				set process[1] to "waiting_for_foreground".
+				set child_process to other_process.
+				set run_mode to "waiting_for_foreground".
 			}
 		}
 	}
@@ -157,7 +163,14 @@ function update_window_akros_main_menu{
 			//case child changed windows (i.e. window manager)
 			draw_empty_background(wnd).
 			invalidate_process_window(process).
-			set process[1] to "title_screen".
+			set run_mode to "title_screen".
 		}
 	}
+
+	if process[1]<>run_mode and run_mode="title_screen"{
+		set process[2] to "ag9".//disable accidental double click by preventing click on first frame
+	}
+	set process[1] to run_mode.
+	set process[3] to child_process.
+	set process[4] to program_selection.
 }

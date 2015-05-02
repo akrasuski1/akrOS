@@ -24,6 +24,25 @@ function run_window_manager{
 	return process.
 }
 
+function draw_window_manager_status{
+	parameter process.
+
+	if not has_focus(process){
+		return 0.
+	}
+	
+	local status is get_status_window(get_process_os_data(process)).
+	local x is status[0].
+	local y is status[1].
+	local w is status[2].
+
+	print "9 - cycle [no,vertical,horizontal] division" at (x+2,y+1).
+	print "7/8 - division ratio -/+" at (x+2,y+2).
+	print "0 - accept selected window" at(x+2,y+3).
+	print "quit and revert - 6" at (x+w-21,y+3).
+	validate_process_status(process).
+}
+
 function draw_window_manager{
 	parameter process.
 
@@ -176,6 +195,9 @@ function update_window_manager{
 
 	if process_needs_redraw(process){
 		draw_window_manager(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_window_manager_status(process).
 	}
 	//restore state:
 	local window is get_process_window(process).

@@ -2,6 +2,10 @@
 
 run lib_navball. // for compass
 
+//add to OS
+parameter os_data.
+register_program(os_data,"Vessel stats","run_vessel_stats",false).
+
 function run_vessel_stats{
 	parameter 
 		os_data,

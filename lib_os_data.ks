@@ -6,6 +6,11 @@
 // [2] - list of all processes
 // [3] - currently focused window's index
 // [4] - if true, visually show selected window
+// [5] - list of installed programs:
+//    [0] - list of names of programs
+//    [1] - list of run program functions
+//    [2] - list of booleans stating whether it is 
+//          system program (runs always in window 0)
 
 function get_window_tree{
 	parameter os_data.
@@ -32,6 +37,69 @@ function get_showing_focused_window{
 	return os_data[4].
 }
 
+function new_os_data{
+	return list(
+		list(),
+		list(),
+		list(),
+		0,
+		true,
+		list(list(),list(),list())
+	).
+}
+
+function get_program_list{
+	parameter os_data.
+	return os_data[5][0]:copy().
+}
+
+function is_system_program{
+	parameter
+		os_data,
+		program_name.
+	
+	local i is 0.
+	local ip is get_program_list(os_data).
+	until i = ip:length(){
+		if ip[i]=program_name and os_data[5][2][i]=true{
+			return true.
+		}
+		set i to i+1.
+	}
+	return false.
+}
+
+function make_process_from_name{
+	parameter
+		os_data,
+		program_name,
+		window_index.
+	
+	local i is 0.
+	local ip is get_program_list(os_data).
+	until i = ip:length(){
+		if ip[i]=program_name{
+			global __os_data is os_data.
+			global __window_index is window_index.
+			return evaluate(os_data[5][1][i]+"(__os_data,__window_index)").
+		}
+		set i to i+1.
+	}
+	print "No such program: "+program_name.
+	local x is 1/0.
+}
+
+function register_program{
+	parameter
+		os_data,
+		program_name,
+		program_run_function,
+		is_system_program_bool.
+	
+	os_data[5][0]:add(program_name).
+	os_data[5][1]:add(program_run_function).
+	os_data[5][2]:add(is_system_program_bool).
+}
 
 function set_focused_window{
 	parameter

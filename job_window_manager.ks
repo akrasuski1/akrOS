@@ -1,6 +1,6 @@
 @lazyglobal off.
 
-function open_window_manager{
+function run_window_manager{
 	parameter os_data.
 
 	local process is list(

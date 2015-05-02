@@ -7,14 +7,14 @@ function open_window_manager{
 		make_process_system_struct(
 			os_data,"update_window_manager",0,"Window manager"
 		),
-		os_data,ag6,ag7,ag8,ag9,ag10,get_window_tree(os_data):copy(),
-		list(0),"x",0
+		"reserved","ag6","ag7","ag8","ag9","ag10",
+		get_window_tree(os_data):copy(),list(0),"x",0
 	).
 	set_showing_focused_window(os_data,false).
-	set os_data[0] to list("x").
+	set os_data[0] to list("x").//set global window tree to just one root
 	resize_windows(os_data).
 	local wl is get_window_list(os_data).
-	set process[10] to wl[0].
+	set process[10] to wl[0]. //process[10] is whole screen rect
 	return process.
 }
 
@@ -24,20 +24,26 @@ function draw_window_manager{
 	if not is_process_gui(process){
 		return 0.
 	}
-
+	
+	//restore
 	local window is get_process_window(process).
+	local x is window[0].
+	local y is window[1].
+	local window_choice is process[8].
+	local whole_screen is process[10].
+	//end restore
 
-	print "akrOS Window Manager" at(window[0]+2,window[1]+2).
-	print "0 - accept window" at(window[0]+2,window[1]+3).
-	print "9 - cycle division" at(window[0]+2,window[1]+4).
-	print "7/8 - div. ratio -/+" at(window[0]+2,window[1]+5).
-	print "6 - revert and quit" at(window[0]+2,window[1]+6).
+	print "akrOS Window Manager" at(x+2,y+2).
+	print "0 - accept window"    at(x+2,y+3).
+	print "9 - cycle division"   at(x+2,y+4).
+	print "7/8 - div. ratio -/+" at(x+2,y+5).
+	print "6 - revert and quit"  at(x+2,y+6).
 
-	//TODO mark current window somehow
 	draw_window_manager_selection(
-		get_window_tree(process[1]),
-		process[10],process[8],0
+		get_window_tree(get_process_os_data(process)),
+		whole_screen,window_choice,0
 	).
+	validate_process_window(process).
 }
 
 function draw_window_manager_selection{ //this ugly thing is pretty much
@@ -165,61 +171,84 @@ function update_window_manager{
 	if process_needs_redraw(process){
 		draw_window_manager(process).
 	}
-	
+	//restore state:
 	local window is get_process_window(process).
-	local os_data is process[1].
-	local old_ag6 is process[2].
-	local old_ag7 is process[3].
-	local old_ag8 is process[4].
-	local old_ag9 is process[5].
-	local old_ag10 is process[6].
+	local os_data is get_process_os_data(process).
+	local backupped_window_tree is process[7].
 	local current_window is process[8].
 	local div is process[9].
+	//input:
+	local old_ag6 is process[2].
+	set process[2] to ag6.
+	local changed_ag6 is old_ag6<>process[2].
+
+	local old_ag7 is process[3].
+	set process[3] to ag7.
+	local changed_ag7 is old_ag7<>process[3].
+
+	local old_ag8 is process[4].
+	set process[4] to ag8.
+	local changed_ag8 is old_ag8<>process[4].
+
+	local old_ag9 is process[5].
+	set process[5] to ag9.
+	local changed_ag9 is old_ag9<>process[5].
+
+	local old_ag10 is process[6].
+	set process[6] to ag10.
+	local changed_ag10 is old_ag10<>process[6].
+
+	if old_ag6="ag6" or not has_focus(process){
+		set changed_ag6 to false.
+		set changed_ag7 to false.
+		set changed_ag8 to false.
+		set changed_ag9 to false.
+		set changed_ag10 to false.
+	}
+
+
 	// current window is list of choices in window tree leading to selected
 	// window, for example (1,2,0) means left window, right window, this.
 	
 	local changed is false.
-	if ag6<>old_ag6{
-		set os_data[0] to process[7]. //revert to backupped tree
+	if changed_ag6{ //abort changes
+		set os_data[0] to backupped_window_tree. //revert to backupped tree
 		resize_windows(os_data).
+		set_showing_focused_window(os_data,true).
 		kill_process(process).
 		return 0.
 	}
-	if ag7<>old_ag7{
+	if changed_ag7{
 		//fraction change
 		change_window_properties(get_window_tree(os_data),
 			current_window,-0.05,false,0).
 		invalidate_process_window(process).
-		set process[3] to ag7.
 		set changed to true.
 	}
-	if ag8<>old_ag8{
+	if changed_ag8{
 		//fraction change
 		change_window_properties(get_window_tree(os_data),
 			current_window,0.05,false,0).
 		invalidate_process_window(process).
-		set process[4] to ag8.
 		set changed to true.
 	}
-	if ag9<>old_ag9{
+	if changed_ag9{
 		//change window division
 		change_window_properties(get_window_tree(os_data),
 			current_window,0,true,0).
 		if div="x"{
-			set process[9] to "v".
+			set div to "v".
 		}
 		else if div="v"{
-			set process[9] to "h".
+			set div to "h".
 		}
 		else{
-			set process[9] to "x".
+			set div to "x".
 		}
-		set div to process[9].
 		invalidate_process_window(process).
-		set process[5] to ag9.
 		set changed to true.
 	}
-	if ag10<>old_ag10{
+	if changed_ag10{
 		//change selected window
 		local finished is change_selected_window(current_window,div).
 		if finished{
@@ -228,12 +257,14 @@ function update_window_manager{
 			kill_process(process).
 			return 0.
 		}
-		set process[9] to "x".//new div
+		set div to "x".//new div
 		invalidate_process_window(process).
-		set process[6] to ag10.
 		set changed to true.
 	}
 	if changed{
 		resize_windows(os_data).
 	}
+	
+	//save
+	set process[9] to div.
 }

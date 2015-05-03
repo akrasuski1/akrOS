@@ -146,10 +146,10 @@ function update_all_processes{
 	until i=process_list:length(){
 		local proc is process_list[i].
 		if process_finished(proc){
-			process_list:remove(i).
 			if is_process_gui(proc){
 				draw_empty_background(get_process_window(proc)).
 			}
+			process_list:remove(i).
 		}
 		else{
 			update_process(proc).

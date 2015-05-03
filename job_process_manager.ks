@@ -110,9 +110,17 @@ function update_process_manager{
 			options:add("Kill").
 			options:add("Change window").
 			options:add("Cancel").
+			local title is "N/A".
+			for proc in get_process_list(os_data){
+				if get_process_id(proc)=selected_pid{
+					set title to get_process_name(proc)+" @ "
+						+get_process_window_string(proc).
+				}
+			}
+			set title to title+":".
 			draw_empty_background(get_process_window(process)).
 			set child_process to run_menu(
-				os_data,get_process_window_index(process),"Select action:",
+				os_data,get_process_window_index(process),title,
 				options,false
 			).
 			set run_mode to "action_selection".

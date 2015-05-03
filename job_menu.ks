@@ -7,7 +7,7 @@ function run_menu{
 		title,
 		list_of_names,
 		return_index. // if true, returns index, otherwise value in list
-
+	
 	local current_option is 0.
 	local len is list_of_names:length().
 
@@ -68,9 +68,14 @@ function update_menu{
 	parameter process.
 
 	// restore state:
-	local window is get_process_window(process).
-	local x is window[0].
-	local y is window[1].
+	local window is 0.
+	local x is 0.
+	local y is 0.
+	if is_process_gui(process){
+		set window to get_process_window(process).
+		set x to window[0].
+		set y to window[1].
+	}
 	local current_option is process[1].
 	local list_of_names is process[5].
 	local len is list_of_names:length().

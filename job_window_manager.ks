@@ -21,7 +21,7 @@ function run_window_manager{
 	).
 	set_showing_focused_window(os_data,false).
 	set os_data[0] to list("x").//set global window tree to just one root
-	resize_windows(os_data).
+	redraw_everything(os_data).
 	local wl is get_window_list(os_data).
 	set process[10] to wl[0]. //process[10] is whole screen rect
 	return process.
@@ -254,7 +254,7 @@ function update_window_manager{
 	local changed is false.
 	if changed_ag6{ // abort any changes
 		set os_data[0] to backupped_window_tree. // revert to backupped tree
-		resize_windows(os_data).
+		redraw_everything(os_data).
 		set_showing_focused_window(os_data,true).
 		kill_process(process).
 		return 0.
@@ -289,7 +289,7 @@ function update_window_manager{
 	if changed_ag10{ // accept selected window and proceed to the next
 		local finished is change_selected_window(current_window,div).
 		if finished{ // all windows were accepted
-			resize_windows(os_data).
+			redraw_everything(os_data).
 			set_showing_focused_window(os_data,true).
 			kill_process(process).
 			return 0.
@@ -299,7 +299,7 @@ function update_window_manager{
 		set changed to true.
 	}
 	if changed{
-		resize_windows(os_data).
+		redraw_everything(os_data).
 	}
 	
 	// save

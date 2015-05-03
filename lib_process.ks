@@ -1,17 +1,17 @@
 @lazyglobal off.
 
-//process is a struct (list) containing process system info
-//and, as a second element, process internal variables list.
-//System info:
-//[0] - Process_finished (bool)
-//[1] - os_data (list)
-//[2] - Update_function (string)
-//[3] - Please_redraw (bool)
-//[4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
-//[5] - Proces name (string)
-//[6] - Please redraw status (bool)
+// Process is a struct (list) containing process system info as its first
+// element. Everything after that is process internal variables.
+// System info:
+// [0] - Process_finished (bool)
+// [1] - os_data (list)
+// [2] - Update_function (string)
+// [3] - Please_redraw (bool)
+// [4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
+// [5] - Proces name (string)
+// [6] - Please redraw status (bool)
 
-//GET:
+// GET:
 function process_finished{
 	parameter process.
 	return process[0][0].
@@ -59,7 +59,7 @@ function get_process_os_data{
 	return process[0][1].
 }
 
-//SET:
+// SET:
 function kill_process{
 	parameter process.
 	set process[0][0] to true.
@@ -101,7 +101,7 @@ function set_process_name{
 	set process[0][5] to name.
 }
 
-//OTHER:
+// OTHER:
 function make_process_system_struct{
 	parameter
 		os_data,

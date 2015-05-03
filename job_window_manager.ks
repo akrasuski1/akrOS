@@ -1,13 +1,16 @@
 @lazyglobal off.
 
-//add to OS
+// add to OS
 parameter os_data.
 register_program(os_data,"Window manager","run_window_manager",true).
 
 function run_window_manager{
 	parameter
 		os_data,
-		window_index.//ignore this argument. Assume it's 0.
+		window_index.
+	// The last argument is ignored - it is here only to make a common
+	// calling interface of menu programs. Window manager always runs in
+	// window 0, because in the beginning it destroys all other windows.
 
 	local process is list(
 		make_process_system_struct(
@@ -59,10 +62,7 @@ function draw_window_manager{
 	//end restore
 
 	print "akrOS Window Manager" at(x+2,y+2).
-	print "0 - accept window"    at(x+2,y+3).
-	print "9 - cycle division"   at(x+2,y+4).
-	print "7/8 - div. ratio -/+" at(x+2,y+5).
-	print "6 - revert and quit"  at(x+2,y+6).
+	print "Main menu placeholder." at(x+2,y+4).
 
 	draw_window_manager_selection(
 		get_window_tree(get_process_os_data(process)),
@@ -71,17 +71,21 @@ function draw_window_manager{
 	validate_process_window(process).
 }
 
-function draw_window_manager_selection{ //this ugly thing is pretty much
-	parameter //copied from main file, with some changes. If any
-		divided_window,//calculation details of window placement change,
-		window,//this function would be outdated
+// This ugly function is pretty much copied from the akros_system file,
+// with some changes. It tries to recursively find currently selected
+// by window manager window and when it's done, draw a nice thick
+// border around it.
+function draw_window_manager_selection{
+	parameter 
+		divided_window,
+		window,
 		window_choice,
 		depth. 
 	
-	if window_choice[depth]=0{
+	if window_choice[depth]=0{ // base case - draw window
 		draw_focused_window_outline(window).
 	}
-	else if divided_window[0]="v"{
+	else if divided_window[0]="v"{ // recurse vertically
 		local first_window_share is round(window[2]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[2] to first_window_share.
@@ -97,7 +101,7 @@ function draw_window_manager_selection{ //this ugly thing is pretty much
 				wnd2,window_choice,depth+1).
 		}
 	}
-	else if divided_window[0]="h"{
+	else if divided_window[0]="h"{ // recurse horizontally
 		local first_window_share is round(window[3]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[3] to first_window_share.
@@ -115,16 +119,19 @@ function draw_window_manager_selection{ //this ugly thing is pretty much
 	}
 }
 
+// This function changes window tree's one particular entry. It might
+// change division ratio (if it is horizontally or vertically divided)
+// or change division type (cyclically: no division, vertical one,
+// horizontal one). This function is recursive.
 function change_window_properties{
 	parameter
 		window_tree,
 		current_window,
-		fraction, //Change by selected amount
-		division, //Change cyclically "x"->"v"->"h"->"x"
-		depth. //internal; call with 0
+		fraction, // add to entry's division ratio this much
+		division, // if true, change division type cyclically ("x","v","h")
+		depth.    // recursion depth; call with 0
 	
-	if current_window[depth]=0{
-		//update THIS window
+	if current_window[depth]=0{ // base case - update entry
 		if division{
 			if window_tree[0]="x"{
 				set window_tree[0] to "v".
@@ -148,25 +155,28 @@ function change_window_properties{
 			window_tree[1] + fraction)).
 	}
 	else{
-		if current_window[depth]=1{
+		if current_window[depth]=1{ // recurse to first child
 			change_window_properties(window_tree[2],current_window,
 				fraction,division,depth+1).
 		}
-		else{
+		else{ // recurse to second child
 			change_window_properties(window_tree[3],current_window,
 				fraction,division,depth+1).
 		}
 	}
 }
 
+// This function is called if user accepts certain window. It changes
+// current window manager selection to the next unvisited window. If
+// such a window is found, it returns false, otherwise it returns true.
 function change_selected_window{
 	parameter 
 		current_window,
 		div.
 	
-	if div="x"{
+	if div="x"{ // I was editing a leaf window.
 		local i is current_window:length()-1.
-		until i<0{
+		until i<0{ // go back until it turns out I was a left child.
 			if current_window[i]<>1{
 				current_window:remove(i).
 			}
@@ -176,17 +186,17 @@ function change_selected_window{
 			set i to i-1.
 		}
 		if i=-1{
-			return true. //all done
+			return true. // all windows were accepted
 		}
-		set current_window[i] to 2.//it was one beforehands
+		set current_window[i] to 2. // go to right child
 		current_window:add(0).
 		return false.
 	}
-	else{
-		local index is current_window:length()-1.// due to kOS bug, need
-		set current_window[index] to 1.//explicit index variable
+	else{ // I splitted window into two - I'm a parent now.
+		local index is current_window:length()-1.
+		set current_window[index] to 1.
 		current_window:add(0).
-		return false. //not finished
+		return false.
 	}
 }
 
@@ -199,13 +209,13 @@ function update_window_manager{
 	if process_status_needs_redraw(process){
 		draw_window_manager_status(process).
 	}
-	//restore state:
+	// restore state:
 	local window is get_process_window(process).
 	local os_data is get_process_os_data(process).
 	local backupped_window_tree is process[7].
 	local current_window is process[8].
 	local div is process[9].
-	//input:
+	// input:
 	local old_ag6 is process[2].
 	set process[2] to ag6.
 	local changed_ag6 is old_ag6<>process[2].
@@ -239,29 +249,26 @@ function update_window_manager{
 	// window, for example (1,2,0) means left window, right window, this.
 	
 	local changed is false.
-	if changed_ag6{ //abort changes
-		set os_data[0] to backupped_window_tree. //revert to backupped tree
+	if changed_ag6{ // abort any changes
+		set os_data[0] to backupped_window_tree. // revert to backupped tree
 		resize_windows(os_data).
 		set_showing_focused_window(os_data,true).
 		kill_process(process).
 		return 0.
 	}
-	if changed_ag7{
-		//fraction change
+	if changed_ag7{ // window ratio change
 		change_window_properties(get_window_tree(os_data),
 			current_window,-0.05,false,0).
 		invalidate_process_window(process).
 		set changed to true.
 	}
-	if changed_ag8{
-		//fraction change
+	if changed_ag8{	// window ratio change
 		change_window_properties(get_window_tree(os_data),
 			current_window,0.05,false,0).
 		invalidate_process_window(process).
 		set changed to true.
 	}
-	if changed_ag9{
-		//change window division
+	if changed_ag9{ // window division type change
 		change_window_properties(get_window_tree(os_data),
 			current_window,0,true,0).
 		if div="x"{
@@ -276,16 +283,15 @@ function update_window_manager{
 		invalidate_process_window(process).
 		set changed to true.
 	}
-	if changed_ag10{
-		//change selected window
+	if changed_ag10{ // accept selected window and proceed to the next
 		local finished is change_selected_window(current_window,div).
-		if finished{
+		if finished{ // all windows were accepted
 			resize_windows(os_data).
 			set_showing_focused_window(os_data,true).
 			kill_process(process).
 			return 0.
 		}
-		set div to "x".//new div
+		set div to "x".// new div
 		invalidate_process_window(process).
 		set changed to true.
 	}
@@ -293,6 +299,6 @@ function update_window_manager{
 		resize_windows(os_data).
 	}
 	
-	//save
+	// save
 	set process[9] to div.
 }

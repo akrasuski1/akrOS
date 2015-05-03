@@ -12,6 +12,7 @@
 //    [2] - boolean stating whether it is system program 
 //          (runs always in window 0)
 // [6] - status bar height (internal)
+// [7] - window focus tip width (external)
 
 // GET:
 function get_window_tree{
@@ -47,13 +48,35 @@ function get_status_height{
 function get_status_window{
 	parameter os_data.
 	return make_rect(
-		0,terminal:height()-os_data[6]-3,terminal:width(),os_data[6]+2
+		0,terminal:height()-os_data[6]-3,
+		terminal:width()-get_focus_change_tip_width(os_data)+1,os_data[6]+2
+	).
+}
+
+function get_focus_change_tip_width{
+	parameter os_data.
+	return os_data[7].
+}
+
+function get_focus_change_tip_window{
+	parameter os_data.
+	local w is get_focus_change_tip_width(os_data).
+	return make_rect(
+		terminal:width()-w,terminal:height()-os_data[6]-3,
+		w,os_data[6]+2
 	).
 }
 
 function draw_status_bar{
 	parameter os_data.
 	draw_empty_window(get_status_window(os_data)).
+	local tip is get_focus_change_tip_window(os_data).
+	draw_empty_window(tip).
+	local x is tip[0].
+	local y is tip[1].
+	print "Use 1/2" at(x+1,y+1).
+	print "to move" at(x+1,y+2).
+	print "focus. " at(x+1,y+3).
 }
 
 function new_os_data{
@@ -64,7 +87,8 @@ function new_os_data{
 		0,      // currently focused window
 		true,   // show focus
 		list(), // empty installed programs list
-		3       // status bar height - hardcoded to make unified experience
+		3,      // status bar height - hardcoded to make unified experience
+		9       // ag1/ag2 tip width - hardcoded too
 	).
 }
 

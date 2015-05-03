@@ -80,10 +80,12 @@ function create_main_menu_child{
 	parameter process.
 
 	local os_data is get_process_os_data(process).
-	local wnd is get_process_window(process).
 	local window_index is get_process_window_index(process).
 
-	draw_empty_background(wnd).
+	if is_process_gui(process){
+		local wnd is get_process_window(process).
+		draw_empty_background(wnd).
+	}
 	local options is get_program_list(os_data).
 	options:add("Back").
 	options:add("Quit akrOS").
@@ -107,7 +109,10 @@ function update_main_menu{
 	local child_process is process[3].
 	local program_selection is process[4].
 	local os_data is get_process_os_data(process).
-	local wnd is get_process_window(process).
+	local wnd is 0.
+	if is_process_gui(process){
+		set wnd to get_process_window(process).
+	}
 	local window_index is get_process_window_index(process).
 	// input:
 	local old_ag9 is process[2].
@@ -140,7 +145,9 @@ function update_main_menu{
 	else if run_mode="program_selection"{
 		if process_finished(child_process){
 			set program_selection to child_return.
-			draw_empty_background(wnd).
+			if is_process_gui(process){
+				draw_empty_background(wnd).
+			}
 			if program_selection="Quit akrOS"{
 				local all_proc is get_process_list(os_data).
 				local i is 0.
@@ -194,7 +201,9 @@ function update_main_menu{
 					os_data,program_selection,window_selection
 				).
 
-				draw_empty_background(wnd).
+				if is_process_gui(process){
+					draw_empty_background(wnd).
+				}
 				if window_selection<>window_index{ // menu is still there
 					local all_proc is get_process_list(os_data).
 					all_proc:add(other_process).
@@ -210,9 +219,11 @@ function update_main_menu{
 	}
 	else if run_mode="waiting_for_foreground"{
 		if process_finished(child_process){
-			set wnd to get_process_window(process). //need to reset in
-			// case child changed windows (i.e. window manager)
-			draw_empty_background(wnd).
+			if is_process_gui(process){
+				set wnd to get_process_window(process). //need to reset in
+				// case child changed windows (i.e. window manager)
+				draw_empty_background(wnd).
+			}
 			set child_process to create_main_menu_child(process).
 			set run_mode to "program_selection".
 		}

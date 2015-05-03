@@ -65,7 +65,6 @@ function draw_main_menu_status{
 	if run_mode<>"title_screen"{ // pass redraw status event to child
 		local child_process is process[3].
 		invalidate_process_status(child_process).
-		validate_process_status(process).
 	}
 	else{
 		local status_bar is get_status_window(os_data).

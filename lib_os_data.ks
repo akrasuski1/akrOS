@@ -101,7 +101,6 @@ function make_process_from_name{
 			global __window_index is window_index.
 			return evaluate(prog[1]+"(__os_data,__window_index)").
 		}
-		set i to i+1.
 	}
 	print "No such program: "+program_name.
 	local x is 1/0.

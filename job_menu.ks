@@ -1,5 +1,3 @@
-// This script shows a menu on the terminal allowing user to
-// select one of the options and return it to calling script.
 @lazyglobal off.
 
 function run_menu{
@@ -8,7 +6,7 @@ function run_menu{
 		window_index,
 		title,
 		list_of_names,
-		return_index. //if true, returns index, otherwise value in list
+		return_index. // if true, returns index, otherwise value in list
 
 	local current_option is 0.
 	local len is list_of_names:length().
@@ -70,7 +68,7 @@ function draw_menu{
 function update_menu{
 	parameter process.
 
-	//restore state:
+	// restore state:
 	local window is get_process_window(process).
 	local x is window[0].
 	local y is window[1].
@@ -78,7 +76,7 @@ function update_menu{
 	local list_of_names is process[5].
 	local len is list_of_names:length().
 	local return_index is process[7].
-	//input:
+	// input:
 	local old_ag7 is process[2].
 	set process[2] to ag7.
 	local changed_ag7 is old_ag7<>process[2].
@@ -125,7 +123,7 @@ function update_menu{
 		}
 	}
 	else if changed_ag9{
-		kill_process(process).//suicide
+		kill_process(process). // suicide
 		if return_index{
 			return current_option.
 		}
@@ -134,6 +132,6 @@ function update_menu{
 		}
 	}
 
-	//save
+	// save:
 	set process[1] to current_option.
 }

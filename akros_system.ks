@@ -1,3 +1,5 @@
+@lazyglobal off.
+
 // Common includes:
 run lib_os_data.
 run lib_process.
@@ -10,9 +12,6 @@ run lib_exec.
 run program_list.
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
-
-set terminal:height to 90.
-set terminal:width to 60.
 
 function reset_window_list{
 	parameter
@@ -107,58 +106,65 @@ function resize_windows{
 	}
 }
 
-set window_tree to list( //this is just initial window tree - we need
-	"v",0.5,list("x"),list( //something to start with. Maybe later
-		"h",0.5,list("x"),list("x") // save a few of those as presets.
-	)
-).
-// each window is there represented as a list. If first element is 
-// "x", then the window is not divided further. If it is "v"/"h",
-// it is split vertically/horizontally into two other windows with ratio
-// kept in the second field of the list. The last two fields represent 
-// child windows recursively.
+function restore_akros{
+	parameter os_data.
 
-set os_data to new_os_data().
-set os_data[0] to window_tree.
+	local old_terminal_width is -1.
+	local old_terminal_height is -1. //force redraw in the beginning
+	local old_ag1 is ag1.
+	local old_ag2 is ag2.
+	local old_showing_focus is get_showing_focused_window(os_data).
+	until get_process_list(os_data):length()=0{
+		local change_focus is 0.
+		if ag1<>old_ag1{
+			set old_ag1 to ag1.
+			set change_focus to change_focus-1.
+		}
+		if ag2<>old_ag2{
+			set old_ag2 to ag2.
+			set change_focus to change_focus+1.
+		}
+		local force_focus is false.
+		if get_showing_focused_window(os_data)<>old_showing_focus{
+			set old_showing_focus to get_showing_focused_window(os_data).
+			set force_focus to true.
+		}
+		if change_focus<>0 or force_focus{
+			update_focus(os_data,change_focus).
+		}
+		if terminal:width<>old_terminal_width or
+			terminal:height<>old_terminal_height{
 
-install_programs(os_data).
+			resize_windows(os_data).
 
-get_process_list(os_data):add(
-	run_main_menu(os_data)
-).
-
-set old_terminal_width to -1.
-set old_terminal_height to -1.
-set old_ag1 to ag1.
-set old_ag2 to ag2.
-set old_showing_focus to get_showing_focused_window(os_data).
-until get_process_list(os_data):length()=0{
-	local change_focus is 0.
-	if ag1<>old_ag1{
-		set old_ag1 to ag1.
-		set change_focus to change_focus-1.
+			set old_terminal_width to terminal:width.
+			set old_terminal_height to terminal:height.
+		}
+		update_all_processes(get_process_list(os_data)).
 	}
-	if ag2<>old_ag2{
-		set old_ag2 to ag2.
-		set change_focus to change_focus+1.
-	}
-	local force_focus is false.
-	if get_showing_focused_window(os_data)<>old_showing_focus{
-		set old_showing_focus to get_showing_focused_window(os_data).
-		set force_focus to true.
-	}
-	if change_focus<>0 or force_focus{
-		update_focus(os_data,change_focus).
-	}
-	if terminal:width<>old_terminal_width or
-		terminal:height<>old_terminal_height{
-
-		resize_windows(os_data).
-
-		set old_terminal_width to terminal:width.
-		set old_terminal_height to terminal:height.
-	}
-	update_all_processes(get_process_list(os_data)).
+	clearscreen.//clean terminal when akrOS exits.
 }
 
-clearscreen.
+function launch_akros{
+	local window_tree is list( //this is just initial window tree - we need
+		"v",0.5,list("x"),list( //something to start with. Maybe later
+			"h",0.5,list("x"),list("x") // save a few of those as presets.
+		)
+	).
+	// each window is there represented as a list. If first element is 
+	// "x", then the window is not divided further. If it is "v"/"h",
+	// it is split vertically/horizontally into two other windows with ratio
+	// kept in the second field of the list. The last two fields represent 
+	// child windows recursively.
+
+	local os_data is new_os_data().
+	set os_data[0] to window_tree.
+
+	install_programs(os_data).
+
+	get_process_list(os_data):add(
+		run_main_menu(os_data)
+	).
+	
+	restore_akros(os_data).
+}

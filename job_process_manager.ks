@@ -173,6 +173,9 @@ function update_process_manager{
 			set run_mode to "just_created".
 		}
 	}
+	else{
+		print "Invalid run_mode: "+run_mode. print 1/0.
+	}
 	
 	// save:
 	set process[1] to run_mode.

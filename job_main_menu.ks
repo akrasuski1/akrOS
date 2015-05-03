@@ -75,6 +75,28 @@ function draw_main_menu_status{
 	validate_process_status(process).
 }
 
+function create_main_menu_child{
+	parameter process.
+
+	local os_data is get_process_os_data(process).
+	local wnd is get_process_window(process).
+
+	draw_empty_background(wnd).
+	local options is get_program_list(os_data).
+	options:add("Back").
+	options:add("Quit akrOS").
+	local child_process is run_menu(
+		os_data,
+		0,
+		"Main menu:",
+		options,
+		false
+	).
+	draw_empty_background(get_status_window(os_data)).
+
+	return child_process.
+}
+
 function update_main_menu{
 	parameter process.
 	
@@ -102,25 +124,14 @@ function update_main_menu{
 	}
 	
 	local child_return is 0.
-	if run_mode<>"title_screen"{//update child if needed
+	if run_mode<>"title_screen"{ // update child if needed
 		set child_return to update_process(child_process).
 	}
 
 	if run_mode="title_screen"{
 		if changed_ag9{
-			draw_empty_background(wnd).
+			set child_process to create_main_menu_child(process).
 			set run_mode to "program_selection".
-			local options is get_program_list(os_data).
-			options:add("Back").
-			options:add("Quit akrOS").
-			set child_process to run_menu(
-				os_data,
-				0,
-				"Main menu:",
-				options,
-				false
-			).
-			draw_empty_background(get_status_window(os_data)).
 		}
 	}
 	else if run_mode="program_selection"{
@@ -131,7 +142,7 @@ function update_main_menu{
 				local all_proc is get_process_list(os_data).
 				local i is 0.
 				until i=all_proc:length{
-					kill_process(all_proc[i]). //kill'em all
+					kill_process(all_proc[i]). // kill'em all
 					set i to i+1.
 				}
 				return 0.
@@ -143,7 +154,7 @@ function update_main_menu{
 			else if is_system_program(os_data,program_selection){
 				local other_process is make_process_from_name(
 					os_data,program_selection,0
-				). //run in window 0 w/o asking
+				). // run in window 0 without asking
 				set child_process to other_process.
 				set run_mode to "waiting_for_foreground".
 			}
@@ -178,8 +189,8 @@ function update_main_menu{
 			if window_selection<>0{ // menu is still there
 				local all_proc is get_process_list(os_data).
 				all_proc:add(other_process).
-				invalidate_process_window(process).
-				set run_mode to "title_screen".
+				set child_process to create_main_menu_child(process).
+				set run_mode to "program_selection".
 			}
 			else{ // menu must disappear to show program
 				set child_process to other_process.
@@ -190,10 +201,10 @@ function update_main_menu{
 	else if run_mode="waiting_for_foreground"{
 		if process_finished(child_process){
 			set wnd to get_process_window(process). //need to reset in
-			//case child changed windows (i.e. window manager)
+			// case child changed windows (i.e. window manager)
 			draw_empty_background(wnd).
-			invalidate_process_window(process).
-			set run_mode to "title_screen".
+			set child_process to create_main_menu_child(process).
+			set run_mode to "program_selection".
 		}
 	}
 

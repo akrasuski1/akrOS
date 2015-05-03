@@ -1,5 +1,8 @@
 @lazyglobal off.
 
+// If you want to customize your akrOS, you can add more entries to this
+// list or comment some of them to erase them.
+
 function install_programs{
 	parameter os_data.
 

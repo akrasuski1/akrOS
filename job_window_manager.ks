@@ -62,7 +62,7 @@ function draw_window_manager{
 	//end restore
 
 	print "akrOS Window Manager" at(x+2,y+2).
-	print "Main menu placeholder." at(x+2,y+4).
+	print "[Main menu place]" at(x+2,y+4).
 
 	draw_window_manager_selection(
 		get_window_tree(get_process_os_data(process)),

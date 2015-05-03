@@ -40,7 +40,7 @@ function draw_process_manager{
 		return 0.
 	}
 	local run_mode is process[1].
-	if run_mode<>"just_created"{
+	if run_mode<>"just_created"{ // pass redraw event to child
 		local child_process is process[2].
 		local window_index is get_process_window_index(process).
 		change_process_window(child_process,window_index).
@@ -89,7 +89,9 @@ function update_process_manager{
 			).
 		}
 		lp:add("Quit").
-		draw_empty_background(get_process_window(process)).
+		if is_process_gui(process){
+			draw_empty_background(get_process_window(process)).
+		}
 		set child_process to run_menu(
 			os_data,get_process_window_index(process),"Select process:",
 			lp,true
@@ -118,7 +120,9 @@ function update_process_manager{
 				}
 			}
 			set title to title+":".
-			draw_empty_background(get_process_window(process)).
+			if is_process_gui(process){
+				draw_empty_background(get_process_window(process)).
+			}
 			set child_process to run_menu(
 				os_data,get_process_window_index(process),title,
 				options,false
@@ -147,7 +151,9 @@ function update_process_manager{
 				}
 				lw:add("Background").
 				lw:add("Cancel").
-				draw_empty_background(get_process_window(process)).
+				if is_process_gui(process){
+					draw_empty_background(get_process_window(process)).
+				}
 				set child_process to run_menu(
 					os_data,get_process_window_index(process),
 					"Select window:",lw,false

@@ -213,7 +213,6 @@ function update_window_manager{
 		draw_window_manager_status(process).
 	}
 	// restore state:
-	local window is get_process_window(process).
 	local os_data is get_process_os_data(process).
 	local backupped_window_tree is process[7].
 	local current_window is process[8].

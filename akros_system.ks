@@ -1,15 +1,23 @@
 @lazyglobal off.
 
 // Common includes:
-run lib_os_data.
-run lib_process.
-run lib_window.
-run job_main_menu.
-run job_menu.
+print "Loading akrOS systems...".
 run lib_exec.
+print "Loaded lib_exec library.".
+run lib_os_data.
+print "Loaded OS data library.".
+run lib_process.
+print "Loaded process library.".
+run lib_window.
+print "Loaded window library.".
+run job_menu.
+print "Loaded menu library.".
+run job_main_menu.
+print "Loaded main menu library.".
 
 // User defined programs:
 run program_list.
+print "Loaded user program list.".
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
 
@@ -174,8 +182,10 @@ function launch_akros{
 
 	local os_data is new_os_data().
 	set os_data[0] to window_tree.
-
+	
+	print "Installing programs.".
 	install_programs(os_data).
+	print "Installed.".
 
 	get_process_list(os_data):add(
 		run_main_menu(os_data)

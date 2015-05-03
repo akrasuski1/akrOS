@@ -49,18 +49,18 @@ function get_status_window{
 	parameter os_data.
 	return make_rect(
 		0,terminal:height()-os_data[6]-3,
-		terminal:width()-get_focus_change_tip_width(os_data)+1,os_data[6]+2
+		terminal:width()-get_focus_tip_width(os_data)+1,os_data[6]+2
 	).
 }
 
-function get_focus_change_tip_width{
+function get_focus_tip_width{
 	parameter os_data.
 	return os_data[7].
 }
 
-function get_focus_change_tip_window{
+function get_focus_tip_window{
 	parameter os_data.
-	local w is get_focus_change_tip_width(os_data).
+	local w is get_focus_tip_width(os_data).
 	return make_rect(
 		terminal:width()-w,terminal:height()-os_data[6]-3,
 		w,os_data[6]+2
@@ -70,7 +70,7 @@ function get_focus_change_tip_window{
 function draw_status_bar{
 	parameter os_data.
 	draw_empty_window(get_status_window(os_data)).
-	local tip is get_focus_change_tip_window(os_data).
+	local tip is get_focus_tip_window(os_data).
 	draw_empty_window(tip).
 	local x is tip[0].
 	local y is tip[1].

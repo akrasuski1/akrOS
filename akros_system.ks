@@ -1,23 +1,24 @@
 @lazyglobal off.
 
+clearscreen.
 // Common includes:
 print "Loading akrOS systems...".
+print "Loading lib_exec library...".
 run lib_exec.
-print "Loaded lib_exec library.".
+print "Loading OS data library...".
 run lib_os_data.
-print "Loaded OS data library.".
+print "Loading process library...".
 run lib_process.
-print "Loaded process library.".
+print "Loading window library...".
 run lib_window.
-print "Loaded window library.".
+print "Loading menu library...".
 run job_menu.
-print "Loaded menu library.".
+print "Loading main menu library...".
 run job_main_menu.
-print "Loaded main menu library.".
 
 // User defined programs:
+print "Loading user program list...".
 run program_list.
-print "Loaded user program list.".
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
 
@@ -161,7 +162,7 @@ function restore_akros{
 		}
 		update_all_processes(get_process_list(os_data)).
 	}
-	clearscreen.//clean terminal when akrOS exits.
+	clearscreen. // clean terminal when akrOS exits.
 }
 
 // This function is a wrapper around the previous function. It starts
@@ -183,9 +184,9 @@ function launch_akros{
 	local os_data is new_os_data().
 	set os_data[0] to window_tree.
 	
-	print "Installing programs.".
+	print "Installing programs...".
 	install_programs(os_data).
-	print "Installed.".
+	print "Done. Ready to launch now.".
 
 	get_process_list(os_data):add(
 		run_main_menu(os_data)

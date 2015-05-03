@@ -116,7 +116,7 @@ function update_main_menu{
 			set child_process to run_menu(
 				os_data,
 				0,
-				"Select program:",
+				"Main menu:",
 				options,
 				false
 			).

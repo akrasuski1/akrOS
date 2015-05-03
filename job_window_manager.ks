@@ -58,6 +58,9 @@ function draw_window_manager{
 	local x is window[0].
 	local y is window[1].
 	local window_choice is process[8].
+	set process[10] to make_rect(
+		0,0,terminal:width,terminal:height-get_status_height(os_data)-2
+	). // need to reset this in case terminal window changed
 	local whole_screen is process[10].
 	//end restore
 

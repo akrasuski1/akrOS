@@ -129,7 +129,21 @@ function update_process_manager{
 				set run_mode to "just_created".
 			}
 			else if action="Change window"{
-				//TODO
+				local len is get_window_list(os_data):length.
+				local lw is list().
+				local i is 0.
+				until i=len{
+					lw:add(i).
+					set i to i+1.
+				}
+				lw:add("Background").
+				lw:add("Cancel").
+				draw_empty_background(get_process_window(process)).
+				set child_process to run_menu(
+					os_data,get_process_window_index(process),
+					"Select window:",lw,false
+				).
+				set run_mode to "window_selection".
 			}
 			else if action="Cancel"{
 				set run_mode to "just_created".
@@ -137,6 +151,23 @@ function update_process_manager{
 			else{
 				print "Shouldn't happen.". print 1/0.
 			}
+		}
+	}
+	else if run_mode="window_selection"{
+		if process_finished(child_process){
+			local window_selection is child_return.
+			if window_selection<>"Cancel"{
+				if window_selection="Background"{
+					set window_selection to -1.
+				}
+				for proc in get_process_list(os_data){
+					if get_process_id(proc)=selected_pid{
+						draw_empty_background(get_process_window(proc)).
+						change_process_window(proc,window_selection).
+					}
+				}
+			}
+			set run_mode to "just_created".
 		}
 	}
 	

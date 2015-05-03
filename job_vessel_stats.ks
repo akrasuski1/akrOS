@@ -2,7 +2,7 @@
 
 run lib_navball. // for compass
 
-//add to OS
+// add to OS
 parameter os_data.
 register_program(os_data,"Vessel stats","run_vessel_stats",false).
 
@@ -83,9 +83,10 @@ function update_vessel_stats{
 		draw_vessel_stats_status(process).
 	}
 	if not is_process_gui(process){
-		return 0. //no point of drawing stuff if I'm backgrounded
+		return 0. // no point of drawing stuff if I'm backgrounded
 	}
 
+	// input:
 	local old_ag9 is process[1].
 	set process[1] to ag9.
 	local changed_ag9 is old_ag9<>process[1].

@@ -217,6 +217,9 @@ function update_main_menu{
 			set run_mode to "program_selection".
 		}
 	}
+	else{
+		print "Invalid run_mode: "+run_mode. print 1/0.
+	}
 
 	if process[1]<>run_mode and run_mode="title_screen"{
 		set process[2] to "ag9".//disable accidental double click by preventing click on first frame

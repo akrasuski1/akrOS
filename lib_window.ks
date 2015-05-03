@@ -1,13 +1,19 @@
-
-
 @lazyglobal off.
 
+// This file contains several useful graphic window drawing routines.
+// It might seem as though a lot of code is duplicated - but it's done
+// for performance reasones. Printing anything on screen is expensive
+// in kOS, so each function is highly specialized and as optimized as
+// reasonably possible.
+
+// Internal representation of a window
 function make_rect{
 	parameter x,y,w,h.
 	// w and h are EXTERNAL width and height
 	return list(x,y,w,h). //returning list as a window handle
 }
 
+// This function draws window border and background (spaces)
 function draw_empty_window{
 	parameter rect.
 
@@ -34,6 +40,7 @@ function draw_empty_window{
 	}
 }
 
+// This function draws just the background (spaces)
 function draw_empty_background{
 	parameter rect.
 
@@ -55,6 +62,8 @@ function draw_empty_background{
 	}
 }
 
+// This is abstracted function used to draw window border using top_char
+// as top and bottom border and side_char for sides.
 function draw_any_outline{
 	parameter
 		rect,
@@ -82,18 +91,24 @@ function draw_any_outline{
 	}
 }
 
+// Wrapper on draw_any_outline used to draw normal window border
 function draw_window_outline{
 	parameter rect.
 	
 	draw_any_outline(rect,"=","|").
 }
 
+// Wrapper on draw_any_outline used to draw focused window border
 function draw_focused_window_outline{
 	parameter rect.
 	
 	draw_any_outline(rect,"#","#").
 }
 
+// This function draws just window corners. It is needed because
+// sometimes one window draws border on top of other window's corner
+// leaving it in a slightly ugly state - corners are thus redrawn
+// after all windows.
 function draw_window_corners{
 	parameter rect.
 
@@ -107,6 +122,8 @@ function draw_window_corners{
 	print "+" at(x+w-1,y+h-1).
 }
 
+// As user needs to be aware of window numbers, they are drawn on the
+// top border of each window.
 function draw_window_number{
 	parameter
 		rect,

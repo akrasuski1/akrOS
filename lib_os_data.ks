@@ -13,6 +13,7 @@
 //          (runs always in window 0)
 // [6] - status bar height (internal)
 // [7] - window focus tip width (external)
+// [8] - current highest process id
 
 // GET:
 function get_window_tree{
@@ -53,6 +54,12 @@ function get_status_window{
 	).
 }
 
+function get_new_pid{
+	parameter os_data.
+	set os_data[8] to os_data[8]+1.
+	return os_data[8].
+}
+
 function get_focus_tip_width{
 	parameter os_data.
 	return os_data[7].
@@ -88,7 +95,8 @@ function new_os_data{
 		true,   // show focus
 		list(), // empty installed programs list
 		3,      // status bar height - hardcoded to make unified experience
-		9       // ag1/ag2 tip width - hardcoded too
+		9,      // ag1/ag2 tip width - hardcoded too
+		-1      // no processes exist yet
 	).
 }
 

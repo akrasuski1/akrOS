@@ -6,11 +6,11 @@
 // [2] - list of all processes
 // [3] - currently focused window's index
 // [4] - if true, visually show selected window
-// [5] - list of installed programs:
-//    [0] - list of names of programs
-//    [1] - list of run program functions
-//    [2] - list of booleans stating whether it is 
-//          system program (runs always in window 0)
+// [5] - list of installed programs, where each program is a list:
+//    [0] - name of program
+//    [1] - run program function
+//    [2] - boolean stating whether it is system program 
+//          (runs always in window 0)
 // [6] - status bar height (internal)
 
 function get_window_tree{
@@ -60,14 +60,19 @@ function new_os_data{
 		list(),
 		0,
 		true,
-		list(list(),list(),list()),
+		list(),
 		3
 	).
 }
 
 function get_program_list{
 	parameter os_data.
-	return os_data[5][0]:copy().
+
+	local ret is list().
+	for prog in os_data[5]{
+		ret:add(prog[0]).
+	}
+	return ret.
 }
 
 function is_system_program{
@@ -75,15 +80,13 @@ function is_system_program{
 		os_data,
 		program_name.
 	
-	local i is 0.
-	local ip is get_program_list(os_data).
-	until i = ip:length(){
-		if ip[i]=program_name and os_data[5][2][i]=true{
-			return true.
+	for prog in os_data[5]{
+		if prog[0]=program_name{
+			return prog[2].
 		}
-		set i to i+1.
 	}
-	return false.
+	print "No such program: "+program_name.
+	local x is 1/0.
 }
 
 function make_process_from_name{
@@ -92,13 +95,11 @@ function make_process_from_name{
 		program_name,
 		window_index.
 	
-	local i is 0.
-	local ip is get_program_list(os_data).
-	until i = ip:length(){
-		if ip[i]=program_name{
+	for prog in os_data[5]{
+		if prog[0]=program_name{
 			global __os_data is os_data.
 			global __window_index is window_index.
-			return evaluate(os_data[5][1][i]+"(__os_data,__window_index)").
+			return evaluate(prog[1]+"(__os_data,__window_index)").
 		}
 		set i to i+1.
 	}
@@ -113,9 +114,9 @@ function register_program{
 		program_run_function,
 		is_system_program_bool.
 	
-	os_data[5][0]:add(program_name).
-	os_data[5][1]:add(program_run_function).
-	os_data[5][2]:add(is_system_program_bool).
+	os_data[5]:add(list(
+		program_name,program_run_function,is_system_program_bool
+	)).
 }
 
 function set_focused_window{

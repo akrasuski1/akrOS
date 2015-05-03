@@ -167,6 +167,7 @@ function update_main_menu{
 					set i to i+1.
 				}
 				lw:add("Background").
+				lw:add("Cancel").
 				set child_process to run_menu(
 					os_data,0,"Select window",lw,false
 				).
@@ -180,21 +181,27 @@ function update_main_menu{
 			if window_selection="Background"{
 				set window_selection to -1.
 			}
-			draw_empty_background(wnd).
-			
-			local other_process is make_process_from_name(
-				os_data,program_selection,window_selection
-			).
-
-			if window_selection<>0{ // menu is still there
-				local all_proc is get_process_list(os_data).
-				all_proc:add(other_process).
+			else if window_selection="Cancel"{
 				set child_process to create_main_menu_child(process).
 				set run_mode to "program_selection".
 			}
-			else{ // menu must disappear to show program
-				set child_process to other_process.
-				set run_mode to "waiting_for_foreground".
+			else{
+				draw_empty_background(wnd).
+				
+				local other_process is make_process_from_name(
+					os_data,program_selection,window_selection
+				).
+
+				if window_selection<>0{ // menu is still there
+					local all_proc is get_process_list(os_data).
+					all_proc:add(other_process).
+					set child_process to create_main_menu_child(process).
+					set run_mode to "program_selection".
+				}
+				else{ // menu must disappear to show program
+					set child_process to other_process.
+					set run_mode to "waiting_for_foreground".
+				}
 			}
 		}
 	}

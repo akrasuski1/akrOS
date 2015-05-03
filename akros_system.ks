@@ -13,16 +13,18 @@ run program_list.
 
 // This is main file of akrOS, basic operating system developed by akrasuski1
 
+// This function creates simple window list (like: [window1,window2,...])
+// from recursively defined window tree.
 function reset_window_list{
 	parameter
-		list_of_windows,
-		divided_window,
-		window.
+		list_of_windows, // target window list
+		divided_window,  // recursive window tree
+		window.          // place on screen (rect)
 	
-	if divided_window[0]="x"{
+	if divided_window[0]="x"{ // base case: simple, non-divided window
 		list_of_windows:add(window:copy()).
 	}
-	if divided_window[0]="v"{
+	if divided_window[0]="v"{ // window divided vertically
 		local first_window_share is round(window[2]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[2] to first_window_share.
@@ -32,7 +34,7 @@ function reset_window_list{
 		set wnd2[2] to window[2]-wnd1[2]+1.
 		reset_window_list(list_of_windows,divided_window[3],wnd2).
 	}
-	if divided_window[0]="h"{
+	if divided_window[0]="h"{ // window divided horizontally
 		local first_window_share is round(window[3]*divided_window[1]).
 		local wnd1 is window:copy().
 		set wnd1[3] to first_window_share.
@@ -44,6 +46,8 @@ function reset_window_list{
 	}
 }
 
+// This function draws a normal border around window which has just lost
+// focus, and a thick border around window which has gained it.
 function update_focus{
 	parameter
 		os_data,
@@ -84,6 +88,9 @@ function update_focus{
 	}
 }
 
+// This function redraws the whole system: windows, focused border, status
+// and individual processes
+//TODO: rename to redraw_everything
 function resize_windows{
 	parameter os_data.
 
@@ -106,6 +113,10 @@ function resize_windows{
 	}
 }
 
+// This function restores akrOS from previously saved data. This will
+// revert processes, focus, and windows to the previous state.
+// Unfortunately this function is of low use right now, due to kOS
+// inability to serialize lists and save them to file.
 function restore_akros{
 	parameter os_data.
 
@@ -145,13 +156,17 @@ function restore_akros{
 	clearscreen.//clean terminal when akrOS exits.
 }
 
+// This function is a wrapper around the previous function. It starts
+// the akrOS with three windows (one on the left half of the screen
+// and two on the right half). There are no processes running initially,
+// other than the main menu.
 function launch_akros{
 	local window_tree is list( //this is just initial window tree - we need
 		"v",0.5,list("x"),list( //something to start with. Maybe later
 			"h",0.5,list("x"),list("x") // save a few of those as presets.
 		)
 	).
-	// each window is there represented as a list. If first element is 
+	// Each window is there represented as a list. If first element is 
 	// "x", then the window is not divided further. If it is "v"/"h",
 	// it is split vertically/horizontally into two other windows with ratio
 	// kept in the second field of the list. The last two fields represent 

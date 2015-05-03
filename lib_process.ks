@@ -10,6 +10,7 @@
 // [4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
 // [5] - Proces name (string)
 // [6] - Please redraw status (bool)
+// [7] - Process system id
 
 // GET:
 function process_finished{
@@ -21,6 +22,11 @@ function get_process_window{
 	parameter process.
 	local wl is get_window_list(process[0][1]).
 	return wl[process[0][4]].
+}
+
+function get_process_window_index{
+	parameter process.
+	return process[0][4].
 }
 
 function get_process_update_function{
@@ -57,6 +63,11 @@ function has_focus{
 function get_process_os_data{
 	parameter process.
 	return process[0][1].
+}
+
+function get_process_id{
+	parameter process.
+	return process[0][7].
 }
 
 // SET:
@@ -115,7 +126,8 @@ function make_process_system_struct{
 		true, // redraw needed
 		window_index,
 		name,
-		true // status redraw needed (check if has focus though!)
+		true, // status redraw needed (check if has focus though!)
+		get_new_pid(os_data)
 	).
 }
 

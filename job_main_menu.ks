@@ -1,17 +1,17 @@
 @lazyglobal off.
 
 function run_main_menu{
-	parameter os_data.
+	parameter
+		os_data,
+		window_index.
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_main_menu",0,"Main menu"
+			os_data,"update_main_menu",window_index,"Main menu"
 		),
 		"title_screen","ag9","child_process","program_selection"
 	).
 	return process.
-	// main menu always runs in window 0 - otherwise it could get
-	// accidentally backgrounded by window manager
 }
 
 function draw_main_menu{
@@ -24,7 +24,8 @@ function draw_main_menu{
 	local run_mode is process[1].
 	local child_process is process[3].
 	if run_mode<>"title_screen"{
-		invalidate_process_window(child_process). // pass redraw to child
+		local window_index is get_process_window_index(process).
+		change_process_window(child_process,window_index).
 		validate_process_window(process).
 		return 0.
 	}
@@ -64,6 +65,7 @@ function draw_main_menu_status{
 	if run_mode<>"title_screen"{ // pass redraw status event to child
 		local child_process is process[3].
 		invalidate_process_status(child_process).
+		validate_process_status(process).
 	}
 	else{
 		local status_bar is get_status_window(os_data).
@@ -80,6 +82,7 @@ function create_main_menu_child{
 
 	local os_data is get_process_os_data(process).
 	local wnd is get_process_window(process).
+	local window_index is get_process_window_index(process).
 
 	draw_empty_background(wnd).
 	local options is get_program_list(os_data).
@@ -87,7 +90,7 @@ function create_main_menu_child{
 	options:add("Quit akrOS").
 	local child_process is run_menu(
 		os_data,
-		0,
+		window_index,
 		"Main menu:",
 		options,
 		false
@@ -106,6 +109,7 @@ function update_main_menu{
 	local program_selection is process[4].
 	local os_data is get_process_os_data(process).
 	local wnd is get_process_window(process).
+	local window_index is get_process_window_index(process).
 	// input:
 	local old_ag9 is process[2].
 	set process[2] to ag9.
@@ -169,7 +173,7 @@ function update_main_menu{
 				lw:add("Background").
 				lw:add("Cancel").
 				set child_process to run_menu(
-					os_data,0,"Select window:",lw,false
+					os_data,window_index,"Select window:",lw,false
 				).
 				set run_mode to "window_selection".
 			}
@@ -178,21 +182,21 @@ function update_main_menu{
 	else if run_mode="window_selection"{
 		if process_finished(child_process){
 			local window_selection is child_return.
-			if window_selection="Background"{
-				set window_selection to -1.
-			}
-			else if window_selection="Cancel"{
+			if window_selection="Cancel"{
 				set child_process to create_main_menu_child(process).
 				set run_mode to "program_selection".
 			}
 			else{
-				draw_empty_background(wnd).
+				if window_selection="Background"{
+					set window_selection to -1.
+				}
 				
 				local other_process is make_process_from_name(
 					os_data,program_selection,window_selection
 				).
 
-				if window_selection<>0{ // menu is still there
+				draw_empty_background(wnd).
+				if window_selection<>window_index{ // menu is still there
 					local all_proc is get_process_list(os_data).
 					all_proc:add(other_process).
 					set child_process to create_main_menu_child(process).

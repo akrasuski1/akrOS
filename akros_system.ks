@@ -99,8 +99,7 @@ function update_focus{
 
 // This function redraws the whole system: windows, focused border, status
 // and individual processes
-//TODO: rename to redraw_everything
-function resize_windows{
+function redraw_everything{
 	parameter os_data.
 
 	clearscreen.
@@ -155,7 +154,7 @@ function restore_akros{
 		if terminal:width<>old_terminal_width or
 			terminal:height<>old_terminal_height{
 
-			resize_windows(os_data).
+			redraw_everything(os_data).
 
 			set old_terminal_width to terminal:width.
 			set old_terminal_height to terminal:height.

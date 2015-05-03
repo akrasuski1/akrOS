@@ -49,7 +49,7 @@ function draw_main_menu{
 
 	print "Press 9 to start." at(x+2,y+8).
 
-	print "v0.1, by akrasuski1" at(x+w-20,y+h-2). // bottom right
+	print "v0.2, by akrasuski1" at(x+w-20,y+h-2). // bottom right
 	
 	validate_process_window(process).
 }

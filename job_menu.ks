@@ -59,7 +59,6 @@ function draw_menu{
 		print "[ ] "+list_of_names[i] at(x+2,y+i+4).
 		set i to i+1.
 	}
-	print "7/8/9 - up/down/select" at(x+2,y+len+5).
 	//TODO: what if options dont fit on window? "[ ] Next page"
 	print "*" at(x+3,y+4+current_option).
 	validate_process_window(process).

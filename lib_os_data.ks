@@ -13,6 +13,7 @@
 //          (runs always in window 0)
 // [6] - status bar height (internal)
 
+// GET:
 function get_window_tree{
 	parameter os_data.
 	return os_data[0].
@@ -45,7 +46,9 @@ function get_status_height{
 
 function get_status_window{
 	parameter os_data.
-	return make_rect(0,terminal:height()-os_data[6]-3,terminal:width(),os_data[6]+2).
+	return make_rect(
+		0,terminal:height()-os_data[6]-3,terminal:width(),os_data[6]+2
+	).
 }
 
 function draw_status_bar{
@@ -55,17 +58,17 @@ function draw_status_bar{
 
 function new_os_data{
 	return list(
-		list(),
-		list(),
-		list(),
-		0,
-		true,
-		list(),
-		3
+		list(), // empty window tree
+		list(), // empty window list
+		list(), // empty processs list
+		0,      // currently focused window
+		true,   // show focus
+		list(), // empty installed programs list
+		3       // status bar height - hardcoded to make unified experience
 	).
 }
 
-function get_program_list{
+function get_program_list{ // just names
 	parameter os_data.
 
 	local ret is list().
@@ -106,6 +109,8 @@ function make_process_from_name{
 	local x is 1/0.
 }
 
+
+// SET:
 function register_program{
 	parameter
 		os_data,

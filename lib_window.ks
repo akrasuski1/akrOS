@@ -2,7 +2,7 @@
 
 // This file contains several useful graphic window drawing routines.
 // It might seem as though a lot of code is duplicated - but it's done
-// for performance reasones. Printing anything on screen is expensive
+// for performance reasons. Printing anything on screen is expensive
 // in kOS, so each function is highly specialized and as optimized as
 // reasonably possible.
 

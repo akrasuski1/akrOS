@@ -24,7 +24,7 @@ function draw_main_menu{
 	local run_mode is process[1].
 	local child_process is process[3].
 	if run_mode<>"title_screen"{
-		invalidate_process_window(child_process). //pass redraw to child
+		invalidate_process_window(child_process). // pass redraw to child
 		validate_process_window(process).
 		return 0.
 	}
@@ -35,20 +35,20 @@ function draw_main_menu{
 	local w is window[2].
 	local h is window[3].
 
-	if w>=26{
+	if w>=26{ // if enough place, print logo
 		print "aaa  k       OOOO SSSS" at(x+2,y+2).
 		print "  a  k       O  O S   " at(x+2,y+3).
 		print "aaa  k k rrr O  O SSSS" at(x+2,y+4).
 		print "a a  kk  r   O  O    S" at(x+2,y+5).
 		print "aaaa k k r   OOOO SSSS" at(x+2,y+6).
 	}
-	else{
+	else{ // otherwise, just short welcome message
 		print "Welcome to akrOS." at(x+2,y+4).
 	}
 
 	print "Press 9 to start." at(x+2,y+8).
 
-	print "v0.1, by akrasuski1" at(x+w-20,y+h-2). //bottom right
+	print "v0.1, by akrasuski1" at(x+w-20,y+h-2). // bottom right
 	
 	validate_process_window(process).
 }
@@ -61,7 +61,7 @@ function draw_main_menu_status{
 	}
 
 	local run_mode is process[1].
-	if run_mode<>"title_screen"{
+	if run_mode<>"title_screen"{ // pass redraw status event to child
 		local child_process is process[3].
 		invalidate_process_status(child_process).
 	}
@@ -78,22 +78,22 @@ function draw_main_menu_status{
 function update_main_menu{
 	parameter process.
 	
-	//restore state:
+	// restore state:
 	local run_mode is process[1].
 	local child_process is process[3].
 	local program_selection is process[4].
 	local os_data is get_process_os_data(process).
 	local wnd is get_process_window(process).
-	//input:
+	// input:
 	local old_ag9 is process[2].
 	set process[2] to ag9.
 	local changed_ag9 is old_ag9<>process[2].
 
-	
 	if old_ag9="ag9" or not has_focus(process){
 		set changed_ag9 to false.
 	}
 	
+
 	if process_needs_redraw(process){
 		draw_main_menu(process).
 	}
@@ -202,6 +202,11 @@ function update_main_menu{
 		draw_empty_background(get_status_window(os_data)). //need to clean status after child
 		invalidate_process_status(process). //redraw status on title
 	}
+	else if process[1]<>run_mode and run_mode="waiting_for_foreground"{
+		draw_empty_background(get_status_window(os_data)).
+	}
+
+	// save
 	set process[1] to run_mode.
 	set process[3] to child_process.
 	set process[4] to program_selection.

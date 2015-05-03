@@ -188,7 +188,7 @@ function launch_akros{
 	print "Done. Ready to launch now.".
 
 	get_process_list(os_data):add(
-		run_main_menu(os_data)
+		run_main_menu(os_data,0)
 	).
 	
 	restore_akros(os_data).

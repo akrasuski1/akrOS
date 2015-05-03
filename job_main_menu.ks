@@ -136,16 +136,16 @@ function update_main_menu{
 				}
 				return 0.
 			}
+			else if program_selection="Back"{
+				set run_mode to "title_screen".
+				invalidate_process_window(process).
+			}
 			else if is_system_program(os_data,program_selection){
 				local other_process is make_process_from_name(
 					os_data,program_selection,0
 				). //run in window 0 w/o asking
 				set child_process to other_process.
 				set run_mode to "waiting_for_foreground".
-			}
-			else if program_selection="Back"{
-				set run_mode to "title_screen".
-				invalidate_process_window(process).
 			}
 			else{
 				local len is get_window_list(os_data):length.

@@ -169,7 +169,7 @@ function update_main_menu{
 				lw:add("Background").
 				lw:add("Cancel").
 				set child_process to run_menu(
-					os_data,0,"Select window",lw,false
+					os_data,0,"Select window:",lw,false
 				).
 				set run_mode to "window_selection".
 			}

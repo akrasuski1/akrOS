@@ -42,9 +42,10 @@ function draw_process_manager{
 	local run_mode is process[1].
 	if run_mode<>"just_created"{
 		local child_process is process[2].
-		invalidate_process_window(child_process).
-		validate_process_window(process).
+		local window_index is get_process_window_index(process).
+		change_process_window(child_process,window_index).
 	}
+	validate_process_window(process).
 }
 
 function get_process_window_string{
@@ -162,7 +163,9 @@ function update_process_manager{
 				}
 				for proc in get_process_list(os_data){
 					if get_process_id(proc)=selected_pid{
-						draw_empty_background(get_process_window(proc)).
+						if is_process_gui(proc){
+							draw_empty_background(get_process_window(proc)).
+						}
 						change_process_window(proc,window_selection).
 					}
 				}

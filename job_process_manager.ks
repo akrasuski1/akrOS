@@ -88,6 +88,7 @@ function update_process_manager{
 				" @ "+get_process_window_string(proc)
 			).
 		}
+		lp:add("Refresh").
 		lp:add("Quit").
 		if is_process_gui(process){
 			draw_empty_background(get_process_window(process)).
@@ -101,33 +102,38 @@ function update_process_manager{
 	else if run_mode="process_selection"{
 		if process_finished(child_process){
 			local selected_index is child_return.
-			if selected_index>=saved_process_list:length(){ // "Quit"
+			if selected_index=saved_process_list:length(){ // "Refresh"
+				set run_mode to "just_created".
+			}
+			else if selected_index=1+saved_process_list:length(){ // "Quit"
 				kill_process(process).
 				return 0.
 			}
-			set selected_pid to get_process_id(
-				saved_process_list[selected_index]
-			).
-			local options is list().
-			options:add("Kill").
-			options:add("Change window").
-			options:add("Cancel").
-			local title is "N/A".
-			for proc in get_process_list(os_data){
-				if get_process_id(proc)=selected_pid{
-					set title to get_process_name(proc)+" @ "
-						+get_process_window_string(proc).
+			else{
+				set selected_pid to get_process_id(
+					saved_process_list[selected_index]
+				).
+				local options is list().
+				options:add("Kill").
+				options:add("Change window").
+				options:add("Cancel").
+				local title is "N/A".
+				for proc in get_process_list(os_data){
+					if get_process_id(proc)=selected_pid{
+						set title to get_process_name(proc)+" @ "
+							+get_process_window_string(proc).
+					}
 				}
+				set title to title+":".
+				if is_process_gui(process){
+					draw_empty_background(get_process_window(process)).
+				}
+				set child_process to run_menu(
+					os_data,get_process_window_index(process),title,
+					options,false
+				).
+				set run_mode to "action_selection".
 			}
-			set title to title+":".
-			if is_process_gui(process){
-				draw_empty_background(get_process_window(process)).
-			}
-			set child_process to run_menu(
-				os_data,get_process_window_index(process),title,
-				options,false
-			).
-			set run_mode to "action_selection".
 		}
 	}
 	else if run_mode="action_selection"{

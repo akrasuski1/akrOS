@@ -148,11 +148,17 @@ function update_process_manager{
 				set run_mode to "just_created".
 			}
 			else if action="Change window"{
+				local taken_windows is list().
+				for proc in get_process_list(os_data){
+					taken_windows:add(get_process_window_index(proc)).
+				}
 				local len is get_window_list(os_data):length.
 				local lw is list().
 				local i is 0.
 				until i=len{
-					lw:add(i).
+					if not taken_windows:contains(i){
+						lw:add(i).
+					}
 					set i to i+1.
 				}
 				lw:add("Background").

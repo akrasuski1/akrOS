@@ -20,6 +20,7 @@ function run_window_manager{
 		get_window_tree(os_data):copy(),list(0),"x",0
 	).
 	set_showing_focused_window(os_data,false).
+	set_focused_window(os_data,0).
 	set os_data[0] to list("x").//set global window tree to just one root
 	redraw_everything(os_data).
 	local wl is get_window_list(os_data).

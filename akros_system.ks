@@ -149,7 +149,9 @@ function restore_akros{
 			set force_focus to true.
 		}
 		if change_focus<>0 or force_focus{
-			update_focus(os_data,change_focus).
+			if get_showing_focused_window(os_data){
+				update_focus(os_data,change_focus).
+			}
 		}
 		if terminal:width<>old_terminal_width or
 			terminal:height<>old_terminal_height{

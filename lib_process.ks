@@ -148,6 +148,11 @@ function update_all_processes{
 		if process_finished(proc){
 			if is_process_gui(proc){
 				draw_empty_background(get_process_window(proc)).
+				if has_focus(proc){
+					draw_empty_background(get_status_window(
+						get_process_os_data(proc)
+					)).
+				}
 			}
 			process_list:remove(i).
 		}

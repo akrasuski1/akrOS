@@ -169,11 +169,17 @@ function update_main_menu{
 				set run_mode to "waiting_for_foreground".
 			}
 			else{
+				local taken_windows is list().
+				for proc in get_process_list(os_data){
+					taken_windows:add(get_process_window_index(proc)).
+				}
 				local len is get_window_list(os_data):length.
 				local lw is list().
 				local i is 0.
 				until i=len{
-					lw:add(i).
+					if i=window_index or not taken_windows:contains(i){
+						lw:add(i).
+					}
 					set i to i+1.
 				}
 				lw:add("Background").

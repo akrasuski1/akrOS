@@ -87,7 +87,7 @@ function create_main_menu_child{
 		draw_empty_background(wnd).
 	}
 	local options is get_program_list(os_data).
-	options:add("Back").
+	options:add("Title screen").
 	options:add("Quit akrOS").
 	local child_process is run_menu(
 		os_data,
@@ -157,7 +157,7 @@ function update_main_menu{
 				}
 				return 0.
 			}
-			else if program_selection="Back"{
+			else if program_selection="Title screen"{
 				set run_mode to "title_screen".
 				invalidate_process_window(process).
 			}

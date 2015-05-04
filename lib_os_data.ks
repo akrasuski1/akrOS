@@ -5,7 +5,7 @@
 // [1] - list of all windows (simple list, not tree or what not)
 // [2] - list of all processes
 // [3] - currently focused window's index
-// [4] - if true, visually show selected window
+// [4] - if true, enable focus mechanics
 // [5] - list of installed programs, where each program is a list:
 //    [0] - name of program
 //    [1] - run program function

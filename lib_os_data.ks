@@ -176,8 +176,8 @@ function register_update_function{ // to-do: add register_update_function to eve
 	until not update_function_iter:next{
 		log "else if update_index="+update_function_iter:index+"{global __akros_update_result__ is "+update_function_iter:value+"(process).}" to __akros_update_cache__.
 	}
-	log "}" to __akros_update_cache__.
 	log "else{print __akros_invalid_update_function_index__error_message__. print 1/0.}" to __akros_update_cache__.
+	log "}" to __akros_update_cache__.
 	run __akros_recompile_update_cache__.
 	return result.
 }

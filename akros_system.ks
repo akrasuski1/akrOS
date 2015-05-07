@@ -8,7 +8,6 @@ print "???". // to-do
 log "" to __akros_update_cache__.
 delete __akros_update_cache__.
 log "parameter process." to __akros_update_cache__.
-wait 1. // debug
 run __akros_recompile_update_cache__.
 print "Loading lib_exec library...".
 run lib_exec.
@@ -18,10 +17,10 @@ print "Loading process library...".
 run lib_process.
 print "Loading window library...".
 run lib_window.
-print "Loading menu library...".
-run job_menu.
-print "Loading main menu library...".
-run job_main_menu.
+// print "Loading menu library...".
+// run job_menu.
+// print "Loading main menu library...".
+// run job_main_menu.
 
 // User defined programs:
 print "Loading user program list...".

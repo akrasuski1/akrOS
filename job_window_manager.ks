@@ -3,7 +3,7 @@
 // add to OS
 parameter os_data.
 register_program(os_data,"Window manager","run_window_manager",true).
-global window_manager_update_function_index is register_update_function("update_window_manager").
+global window_manager_update_function_index is register_update_function(os_data,"update_window_manager").
 
 function run_window_manager{
 	parameter

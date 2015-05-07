@@ -5,7 +5,7 @@ run lib_navball. // for compass
 // add to OS
 parameter os_data.
 register_program(os_data,"Vessel stats","run_vessel_stats",false).
-global vessel_stats_update_function_index is register_update_function("update_vessel_stats").
+global vessel_stats_update_function_index is register_update_function(os_data,"update_vessel_stats").
 
 function run_vessel_stats{
 	parameter

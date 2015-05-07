@@ -1,6 +1,7 @@
 @lazyglobal off.
 
-global main_menu_update_function_index is register_update_function("update_main_menu").
+parameter os_data.
+global main_menu_update_function_index is register_update_function(os_data,"update_main_menu").
 
 function run_main_menu{
 	parameter

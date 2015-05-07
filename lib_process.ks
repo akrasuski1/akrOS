@@ -134,6 +134,7 @@ function make_process_system_struct{
 function update_process{
 	parameter process.
 	run __akros_run_update_cache__(process).
+	return __akros_update_result__.
 }
 
 function update_all_processes{

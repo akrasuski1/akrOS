@@ -3,7 +3,7 @@
 // add to OS
 parameter os_data.
 register_program(os_data,"Process manager","run_process_manager",false).
-global process_manager_update_function_index is register_update_function("update_process_manager").
+global process_manager_update_function_index is register_update_function(os_data,"update_process_manager").
 
 function run_process_manager{
 	parameter

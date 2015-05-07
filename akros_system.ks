@@ -3,6 +3,12 @@
 clearscreen.
 // Common includes:
 print "Loading akrOS systems...".
+// next 5 lines are here for safety reasons. warranty void if you remove them.
+print "???". // to-do
+log "" to __akros_update_cache__.
+delete __akros_update_cache__.
+log "parameter process." to __akros_update_cache__.
+run __akros_recompile_update_cache__.
 print "Loading lib_exec library...".
 run lib_exec.
 print "Loading OS data library...".
@@ -11,10 +17,10 @@ print "Loading process library...".
 run lib_process.
 print "Loading window library...".
 run lib_window.
-print "Loading menu library...".
-run job_menu.
-print "Loading main menu library...".
-run job_main_menu.
+// print "Loading menu library...".
+// run job_menu.
+// print "Loading main menu library...".
+// run job_main_menu.
 
 // User defined programs:
 print "Loading user program list...".
@@ -29,7 +35,7 @@ function reset_window_list{
 		list_of_windows, // target window list
 		divided_window,  // recursive window tree
 		window.          // place on screen (rect)
-	
+
 	if divided_window[0]="x"{ // base case: simple, non-divided window
 		list_of_windows:add(window:copy()).
 	}
@@ -61,12 +67,12 @@ function update_focus{
 	parameter
 		os_data,
 		shift_by.
-	
+
 	local current is get_focused_window(os_data).
 	local old is current.
 	set current to current+shift_by+get_window_list(os_data):length().
 	set current to mod(current,get_window_list(os_data):length()).
-	if old<>current and 
+	if old<>current and
 		get_showing_focused_window(os_data) and
 		old<get_window_list(os_data):length(){
 
@@ -176,15 +182,15 @@ function launch_akros{
 			"h",0.5,list("x"),list("x") // save a few of those as presets.
 		)
 	).
-	// Each window is there represented as a list. If first element is 
+	// Each window is there represented as a list. If first element is
 	// "x", then the window is not divided further. If it is "v"/"h",
 	// it is split vertically/horizontally into two other windows with ratio
-	// kept in the second field of the list. The last two fields represent 
+	// kept in the second field of the list. The last two fields represent
 	// child windows recursively.
 
 	local os_data is new_os_data().
 	set os_data[0] to window_tree.
-	
+
 	print "Installing programs...".
 	install_programs(os_data).
 	print "Done. Ready to launch now.".
@@ -192,6 +198,6 @@ function launch_akros{
 	get_process_list(os_data):add(
 		run_main_menu(os_data,0)
 	).
-	
+
 	restore_akros(os_data).
 }

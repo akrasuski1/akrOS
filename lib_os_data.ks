@@ -9,11 +9,12 @@
 // [5] - list of installed programs, where each program is a list:
 //    [0] - name of program
 //    [1] - run program function
-//    [2] - boolean stating whether it is system program 
+//    [2] - boolean stating whether it is system program
 //          (runs always in window 0)
 // [6] - status bar height (internal)
 // [7] - window focus tip width (external)
 // [8] - current highest process id
+// [9] - list of all registered update functions
 
 // GET:
 function get_window_tree{
@@ -96,7 +97,8 @@ function new_os_data{
 		list(), // empty installed programs list
 		3,      // status bar height - hardcoded to make unified experience
 		9,      // ag1/ag2 tip width - hardcoded too
-		-1      // no processes exist yet
+		-1,      // no processes exist yet
+		list()
 	).
 }
 
@@ -114,7 +116,7 @@ function is_system_program{
 	parameter
 		os_data,
 		program_name.
-	
+
 	for prog in os_data[5]{
 		if prog[0]=program_name{
 			return prog[2].
@@ -129,7 +131,7 @@ function make_process_from_name{
 		os_data,
 		program_name,
 		window_index.
-	
+
 	for prog in os_data[5]{
 		if prog[0]=program_name{
 			global __os_data is os_data.
@@ -149,10 +151,35 @@ function register_program{
 		program_name,
 		program_run_function,
 		is_system_program_bool.
-	
+
 	os_data[5]:add(list(
 		program_name,program_run_function,is_system_program_bool
 	)).
+}
+
+global __akros_invalid_update_function_index__error_message__ is "error: invalid update function index".
+
+function register_update_function{ // to-do: add register_update_function to every job
+	parameter
+		os_data,
+		update_function.
+	local result is os_data[9]:length.
+	os_data[9]:add(update_function).
+	log "" to __akros_update_cache__.
+	delete __akros_update_cache__.
+	log "parameter process." to __akros_update_cache__.
+	log "global __akros_update_result__ is 0." to __akros_update_cache__.
+	log "if process<>0{" to __akros_update_cache__.
+	log "local update_index is get_process_update_function_index(process)." to __akros_update_cache__.
+	log "if false {}" to __akros_update_cache__. // I know it looks silly but it simplifies other things later
+	local update_function_iter is os_data[9]:iterator.
+	until not update_function_iter:next{
+		log "else if update_index="+update_function_iter:index+"{global __akros_update_result__ is "+update_function_iter:value+"(process).}" to __akros_update_cache__.
+	}
+	log "else{print __akros_invalid_update_function_index__error_message__. print 1/0.}" to __akros_update_cache__.
+	log "}" to __akros_update_cache__.
+	run __akros_recompile_update_cache__.
+	return result.
 }
 
 function set_focused_window{

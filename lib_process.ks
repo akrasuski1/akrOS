@@ -5,7 +5,7 @@
 // System info:
 // [0] - Process_finished (bool)
 // [1] - os_data (list)
-// [2] - Update_function (string)
+// [2] - Update_function_index (integer)
 // [3] - Please_redraw (bool)
 // [4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
 // [5] - Proces name (string)
@@ -29,7 +29,7 @@ function get_process_window_index{
 	return process[0][4].
 }
 
-function get_process_update_function{
+function get_process_update_function_index{
 	parameter process.
 	return process[0][2].
 }
@@ -41,7 +41,7 @@ function process_needs_redraw{
 
 function is_process_gui{
 	parameter process.
-	return process[0][4]>=0 and 
+	return process[0][4]>=0 and
 		process[0][4]<get_window_list(process[0][1]):length.
 }
 
@@ -116,13 +116,13 @@ function set_process_name{
 function make_process_system_struct{
 	parameter
 		os_data,
-		update_function,
+		update_function_index,
 		window_index,
 		name.
 	return list(
 		false, // not finished yet
 		os_data,
-		update_function,
+		update_function_index,
 		true, // redraw needed
 		window_index,
 		name,
@@ -133,11 +133,8 @@ function make_process_system_struct{
 
 function update_process{
 	parameter process.
-	global __process_state is process.
-	return evaluate(
-		get_process_update_function(process)+"(__process_state)"
-	).
-	//TODO: update above line function pointers come.
+	run __akros_run_update_cache__(process).
+	return __akros_update_result__.
 }
 
 function update_all_processes{

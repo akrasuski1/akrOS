@@ -157,6 +157,31 @@ function register_program{
 	)).
 }
 
+global __akros_invalid_update_function_index__error_message__ is "error: invalid update function index".
+
+function register_update_function{ // to-do: add register_update_function to every job
+	parameter
+		os_data,
+		update_function.
+	local result is os_data[9]:length.
+	os_data[9]:add(update_function).
+	log "" to __akros_update_cache__.
+	delete __akros_update_cache__.
+	log "parameter process." to __akros_update_cache__.
+	log "global __akros_update_result__ is 0." to __akros_update_cache__.
+	log "if process<>0{" to __akros_update_cache__.
+	log "local update_index is get_process_update_function_index(process)." to __akros_update_cache__. // to-do: make get_process_update_function_index(process)
+	log "if false {}" to __akros_update_cache__. // I know it looks silly but it simplifies other things later
+	local update_function_iter is os_data[9]:iterator.
+	until not update_function_iter:next{
+		log "else if update_index="+update_function_iter:index+"{global __akros_update_result__ is "+update_function_iter:value+"(process).}" to __akros_update_cache__.
+	}
+	log "}" to __akros_update_cache__.
+	log "else{print __akros_invalid_update_function_index__error_message__. print 1/0.}" to __akros_update_cache__.
+	run __akros_recompile_update_cache__.
+	return result.
+}
+
 function set_focused_window{
 	parameter
 		os_data,

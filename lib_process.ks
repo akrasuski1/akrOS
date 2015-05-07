@@ -41,7 +41,7 @@ function process_needs_redraw{
 
 function is_process_gui{
 	parameter process.
-	return process[0][4]>=0 and 
+	return process[0][4]>=0 and
 		process[0][4]<get_window_list(process[0][1]):length.
 }
 
@@ -113,16 +113,16 @@ function set_process_name{
 }
 
 // OTHER:
-function make_process_system_struct{
+function make_process_system_struct{ //to-do: change all jobs to use update_function_index
 	parameter
 		os_data,
-		update_function,
+		update_function_index,
 		window_index,
 		name.
 	return list(
 		false, // not finished yet
 		os_data,
-		update_function,
+		update_function_index,
 		true, // redraw needed
 		window_index,
 		name,
@@ -133,11 +133,7 @@ function make_process_system_struct{
 
 function update_process{
 	parameter process.
-	global __process_state is process.
-	return evaluate(
-		get_process_update_function(process)+"(__process_state)"
-	).
-	//TODO: update above line function pointers come.
+	run __akros_run_update_cache__(process).
 }
 
 function update_all_processes{

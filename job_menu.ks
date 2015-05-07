@@ -1,5 +1,7 @@
 @lazyglobal off.
 
+global menu_update_function_index is register_update_function("update_menu").
+
 function run_menu{
 	parameter
 		os_data,
@@ -7,13 +9,13 @@ function run_menu{
 		title,
 		list_of_names,
 		return_index. // if true, returns index, otherwise value in list
-	
+
 	local current_option is 0.
 	local len is list_of_names:length().
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_menu",window_index,"Menu"
+			os_data,menu_update_function_index,window_index,"Menu"
 		),
 		current_option,"ag7","ag8","ag9",list_of_names,title,
 		return_index
@@ -27,7 +29,7 @@ function draw_menu_status{
 	if not has_focus(process){
 		return 0.
 	}
-	
+
 	local status is get_status_window(get_process_os_data(process)).
 	local x is status[0].
 	local y is status[1].
@@ -88,7 +90,7 @@ function update_menu{
 	local old_ag8 is process[3].
 	set process[3] to ag8.
 	local changed_ag8 is old_ag8<>process[3].
-	
+
 	local old_ag9 is process[4].
 	set process[4] to ag9.
 	local changed_ag9 is old_ag9<>process[4].

@@ -3,15 +3,16 @@
 // add to OS
 parameter os_data.
 register_program(os_data,"Process manager","run_process_manager",false).
+global process_manager_update_function_index is register_update_function("update_process_manager").
 
 function run_process_manager{
 	parameter
 		os_data,
 		window_index.
-	
+
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_process_manager",window_index,"Process manager"
+			os_data,process_manager_update_function_index,window_index,"Process manager"
 		),
 		"just_created","child_process","selected_process_id",
 		"saved_process_list"
@@ -66,7 +67,7 @@ function update_process_manager{
 	if process_status_needs_redraw(process){
 		draw_process_manager_status(process).
 	}
-	
+
 	// restore:
 	local run_mode is process[1].
 	local child_process is process[2].
@@ -202,7 +203,7 @@ function update_process_manager{
 	else{
 		print "Invalid run_mode: "+run_mode. print 1/0.
 	}
-	
+
 	// save:
 	set process[1] to run_mode.
 	set process[2] to child_process.

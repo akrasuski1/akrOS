@@ -170,7 +170,7 @@ function register_update_function{ // to-do: add register_update_function to eve
 	log "parameter process." to __akros_update_cache__.
 	log "global __akros_update_result__ is 0." to __akros_update_cache__.
 	log "if process<>0{" to __akros_update_cache__.
-	log "local update_index is get_process_update_function_index(process)." to __akros_update_cache__. // to-do: make get_process_update_function_index(process)
+	log "local update_index is get_process_update_function_index(process)." to __akros_update_cache__.
 	log "if false {}" to __akros_update_cache__. // I know it looks silly but it simplifies other things later
 	local update_function_iter is os_data[9]:iterator.
 	until not update_function_iter:next{

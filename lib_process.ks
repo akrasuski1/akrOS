@@ -5,7 +5,7 @@
 // System info:
 // [0] - Process_finished (bool)
 // [1] - os_data (list)
-// [2] - Update_function (string)
+// [2] - Update_function_index (integer)
 // [3] - Please_redraw (bool)
 // [4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
 // [5] - Proces name (string)
@@ -29,7 +29,7 @@ function get_process_window_index{
 	return process[0][4].
 }
 
-function get_process_update_function{
+function get_process_update_function_index{
 	parameter process.
 	return process[0][2].
 }
@@ -113,7 +113,7 @@ function set_process_name{
 }
 
 // OTHER:
-function make_process_system_struct{ //to-do: change all jobs to use update_function_index
+function make_process_system_struct{
 	parameter
 		os_data,
 		update_function_index,

@@ -5,15 +5,16 @@ run lib_navball. // for compass
 // add to OS
 parameter os_data.
 register_program(os_data,"Vessel stats","run_vessel_stats",false).
+global vessel_stats_update_function_index is register_update_function("update_vessel_stats").
 
 function run_vessel_stats{
-	parameter 
+	parameter
 		os_data,
 		window_index.
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_vessel_stats",window_index,
+			os_data,vessel_stats_update_function_index,window_index,
 			"Vessel stats"
 		),
 		"ag9"
@@ -27,7 +28,7 @@ function draw_vessel_stats_status{
 	if not has_focus(process){
 		return 0.
 	}
-	
+
 	local status is get_status_window(get_process_os_data(process)).
 	local x is status[0].
 	local y is status[1].

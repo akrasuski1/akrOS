@@ -3,6 +3,7 @@
 // add to OS
 parameter os_data.
 register_program(os_data,"Window manager","run_window_manager",true).
+global window_manager_update_function_index is register_update_function("update_window_manager").
 
 function run_window_manager{
 	parameter
@@ -14,7 +15,7 @@ function run_window_manager{
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_window_manager",0,"Window manager"
+			os_data,window_manager_update_function_index,0,"Window manager"
 		),
 		"reserved","ag6","ag7","ag8","ag9","ag10",
 		get_window_tree(os_data):copy(),list(0),"x",0
@@ -34,7 +35,7 @@ function draw_window_manager_status{
 	if not has_focus(process){
 		return 0.
 	}
-	
+
 	local status is get_status_window(get_process_os_data(process)).
 	local x is status[0].
 	local y is status[1].
@@ -53,7 +54,7 @@ function draw_window_manager{
 	if not is_process_gui(process){
 		return 0.
 	}
-	
+
 	//restore
 	local window is get_process_window(process).
 	local x is window[0].
@@ -80,12 +81,12 @@ function draw_window_manager{
 // by window manager window and when it's done, draw a nice thick
 // border around it.
 function draw_window_manager_selection{
-	parameter 
+	parameter
 		divided_window,
 		window,
 		window_choice,
-		depth. 
-	
+		depth.
+
 	if window_choice[depth]=0{ // base case - draw window
 		draw_focused_window_outline(window).
 	}
@@ -134,7 +135,7 @@ function change_window_properties{
 		fraction, // add to entry's division ratio this much
 		division, // if true, change division type cyclically ("x","v","h")
 		depth.    // recursion depth; call with 0
-	
+
 	if current_window[depth]=0{ // base case - update entry
 		if division{
 			if window_tree[0]="x"{
@@ -174,10 +175,10 @@ function change_window_properties{
 // current window manager selection to the next unvisited window. If
 // such a window is found, it returns false, otherwise it returns true.
 function change_selected_window{
-	parameter 
+	parameter
 		current_window,
 		div.
-	
+
 	if div="x"{ // I was editing a leaf window.
 		local i is current_window:length()-1.
 		until i<0{ // go back until it turns out I was a left child.
@@ -250,7 +251,7 @@ function update_window_manager{
 
 	// current window is list of choices in window tree leading to selected
 	// window, for example (1,2,0) means left window, right window, this.
-	
+
 	local changed is false.
 	if changed_ag6{ // abort any changes
 		set os_data[0] to backupped_window_tree. // revert to backupped tree
@@ -301,7 +302,7 @@ function update_window_manager{
 	if changed{
 		redraw_everything(os_data).
 	}
-	
+
 	// save
 	set process[9] to div.
 }

@@ -1,5 +1,7 @@
 @lazyglobal off.
 
+global main_menu_update_function_index is register_update_function("update_main_menu").
+
 function run_main_menu{
 	parameter
 		os_data,
@@ -7,7 +9,7 @@ function run_main_menu{
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_main_menu",window_index,"Main menu"
+			os_data,main_menu_update_function_index,window_index,"Main menu"
 		),
 		"title_screen","ag9","child_process","program_selection"
 	).
@@ -16,11 +18,11 @@ function run_main_menu{
 
 function draw_main_menu{
 	parameter process.
-	
+
 	if not is_process_gui(process){
 		return 0.
 	}
-	
+
 	local run_mode is process[1].
 	local child_process is process[3].
 	if run_mode<>"title_screen"{
@@ -50,13 +52,13 @@ function draw_main_menu{
 	print "Press 9 to start." at(x+2,y+8).
 
 	print "v0.2, by akrasuski1" at(x+w-20,y+h-2). // bottom right
-	
+
 	validate_process_window(process).
 }
 
 function draw_main_menu_status{
 	parameter process.
-	
+
 	if not has_focus(process){
 		return 0.
 	}
@@ -103,7 +105,7 @@ function create_main_menu_child{
 
 function update_main_menu{
 	parameter process.
-	
+
 	// restore state:
 	local run_mode is process[1].
 	local child_process is process[3].
@@ -122,7 +124,7 @@ function update_main_menu{
 	if old_ag9="ag9" or not has_focus(process){
 		set changed_ag9 to false.
 	}
-	
+
 
 	if process_needs_redraw(process){
 		draw_main_menu(process).
@@ -130,7 +132,7 @@ function update_main_menu{
 	if process_status_needs_redraw(process){
 		draw_main_menu_status(process).
 	}
-	
+
 	local child_return is 0.
 	if run_mode<>"title_screen"{ // update child if needed
 		set child_return to update_process(child_process).
@@ -202,7 +204,7 @@ function update_main_menu{
 				if window_selection="Background"{
 					set window_selection to -1.
 				}
-				
+
 				local other_process is make_process_from_name(
 					os_data,program_selection,window_selection
 				).

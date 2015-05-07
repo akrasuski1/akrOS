@@ -9,11 +9,12 @@
 // [5] - list of installed programs, where each program is a list:
 //    [0] - name of program
 //    [1] - run program function
-//    [2] - boolean stating whether it is system program 
+//    [2] - boolean stating whether it is system program
 //          (runs always in window 0)
 // [6] - status bar height (internal)
 // [7] - window focus tip width (external)
 // [8] - current highest process id
+// [9] - list of all registered update functions
 
 // GET:
 function get_window_tree{
@@ -96,7 +97,8 @@ function new_os_data{
 		list(), // empty installed programs list
 		3,      // status bar height - hardcoded to make unified experience
 		9,      // ag1/ag2 tip width - hardcoded too
-		-1      // no processes exist yet
+		-1,      // no processes exist yet
+		list()
 	).
 }
 
@@ -114,7 +116,7 @@ function is_system_program{
 	parameter
 		os_data,
 		program_name.
-	
+
 	for prog in os_data[5]{
 		if prog[0]=program_name{
 			return prog[2].
@@ -129,7 +131,7 @@ function make_process_from_name{
 		os_data,
 		program_name,
 		window_index.
-	
+
 	for prog in os_data[5]{
 		if prog[0]=program_name{
 			global __os_data is os_data.
@@ -149,7 +151,7 @@ function register_program{
 		program_name,
 		program_run_function,
 		is_system_program_bool.
-	
+
 	os_data[5]:add(list(
 		program_name,program_run_function,is_system_program_bool
 	)).

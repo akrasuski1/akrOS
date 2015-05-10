@@ -137,6 +137,7 @@ function restore_akros{
 	local old_ag2 is ag2.
 	local old_ag9 is ag9.
 	local old_showing_focus is get_showing_focused_window(os_data).
+	local all_proc is get_process_list(os_data).
 	until get_os_quitting(os_data){
 		local change_focus is 0.
 		local open_main_menu is false.
@@ -172,19 +173,23 @@ function restore_akros{
 		}
 		if open_main_menu{
 			local focused_proc is 0.
-			for proc in get_process_list(os_data){
+			for proc in all_proc{
 				if has_focus(proc){
 					set focused_proc to proc.
 					break.
 				}
 			}
 			if focused_proc=0{ //empty window is focused
-				get_process_list(os_data):add(
+				all_proc:add(
 					run_main_menu(os_data,get_focused_window(os_data))
 				).
 			}
 		}
-		update_all_processes(get_process_list(os_data)).
+		update_all_processes(all_proc).
+		for proc in get_new_processes(os_data){
+			all_proc:add(proc).
+		}
+		get_new_processes(os_data):clear().
 	}
 	clearscreen. // clean terminal when akrOS exits.
 }

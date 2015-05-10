@@ -203,7 +203,7 @@ function update_main_menu{
 					draw_empty_background(wnd).
 				}
 				local all_proc is get_process_list(os_data).
-				all_proc:add(other_process).
+				add_new_process(os_data,other_process).
 				if window_selection<>window_index{ // menu is still there
 					set child_process to create_main_menu_child(process).
 					set run_mode to "program_selection".

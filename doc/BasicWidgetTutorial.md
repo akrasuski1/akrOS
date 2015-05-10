@@ -83,3 +83,51 @@ structure. The function's name is `make_process_system_struct` and it accepts fo
 * title of your widget
 
 All of those arguments were described earlier, so I don't think I need to repeat.
+
+#### `draw status` function
+
+```
+function draw_my_widget_status{
+	parameter process.
+
+	if not has_focus(process){
+		return 0.
+	}
+	
+	local status is get_status_window(get_process_os_data(process)).
+	local x is status[0].
+	local y is status[1].
+	local w is status[2].
+
+	print "Type instructions here, such as:" at (x+2,y+2).
+	print "Press 9 to quit." at (x+w-17,y+3).
+	validate_process_status(process).
+}
+```
+
+This is the next function in the basic widget skeleton. It is used to draw in the *status bar* - a
+small rectangular box in the bottom of the terminal. You may use it for your purposes, but the best
+thing you can put there, are instructions about your widget - in particular, which action groups
+do which things. This function has no enforced definition (number of arguments, name, etc.), but it 
+is very helpful if we all follow one convention - call the function `draw_somename_status`, and make
+it accept one argument - the process structure.
+
+The first thing this process should do, is check whether the widget process has *focus* - that is, if
+the window around the widget has thick border (You can change focus using AG1 and AG2). Only focused
+windows are allowed to draw their status, so if the check is absent, two windows will draw their status
+at the same time, leading to blinking and useless, unreadable status. So keep the check here.
+
+Then, provided you have focus, you should get available area, where you can draw your status. The way
+to do this is presented above: `get_status_window(get_process_os_data(process)).`. This function returns
+a *window* - a structure containing four elements, in the following order: x-coordinate of left edge,
+y-coordinate of top edge, width and height. The next three lines get x, y and w from that structure,
+to make following code less complex.
+
+Then, you can draw whatever you want in the provided box. Be aware that status bar is only three lines
+wide, so you should be concise in whatever you type there. Also, I encourage you to test your code often,
+as it is very easy to make off-by-one mistakes here.
+
+The last line of this function should always be `validate_process_status(process).`. This tells
+the OS, that a status redraw is no longer needed for this window. If you forget this line, the OS might
+become slower, because it will redraw the status even when not needed.
+

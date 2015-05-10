@@ -75,6 +75,9 @@ function update_focus{
 		draw_window_corners(wnd).
 	}
 	draw_status_bar(os_data).
+	if not get_showing_focused_window(os_data){
+		return 0.
+	}
 	set_focused_window(os_data,current).
 	if get_showing_focused_window(os_data){
 		draw_focused_window_outline(
@@ -138,6 +141,7 @@ function restore_akros{
 	local old_ag9 is ag9.
 	local old_showing_focus is get_showing_focused_window(os_data).
 	local all_proc is get_process_list(os_data).
+	local frames_on_empty_window is 0.
 	until get_os_quitting(os_data){
 		local change_focus is 0.
 		local open_main_menu is false.
@@ -171,7 +175,8 @@ function restore_akros{
 			set old_terminal_width to terminal:width.
 			set old_terminal_height to terminal:height.
 		}
-		if open_main_menu{
+
+		if get_showing_focused_window(os_data){
 			local focused_proc is 0.
 			for proc in all_proc{
 				if has_focus(proc){
@@ -179,11 +184,20 @@ function restore_akros{
 					break.
 				}
 			}
-			if focused_proc=0{ //empty window is focused
-				all_proc:add(
-					run_main_menu(os_data,get_focused_window(os_data))
-				).
+			if focused_proc=0{
+				set frames_on_empty_window to frames_on_empty_window+1.
 			}
+			else{
+				set frames_on_empty_window to 0.
+			}
+		}
+		else{
+			set frames_on_empty_window to 0.
+		}
+		if open_main_menu and frames_on_empty_window>1{
+			all_proc:add(
+				run_main_menu(os_data,get_focused_window(os_data))
+			).
 		}
 		update_all_processes(all_proc).
 		for proc in get_new_processes(os_data){

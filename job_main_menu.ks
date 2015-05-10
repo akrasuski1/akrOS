@@ -88,6 +88,7 @@ function create_main_menu_child{
 	}
 	local options is get_program_list(os_data).
 	options:add("Title screen").
+	options:add("Close this window").
 	options:add("Quit akrOS").
 	local child_process is run_menu(
 		os_data,
@@ -149,12 +150,11 @@ function update_main_menu{
 				draw_empty_background(wnd).
 			}
 			if program_selection="Quit akrOS"{
-				local all_proc is get_process_list(os_data).
-				local i is 0.
-				until i=all_proc:length{
-					kill_process(all_proc[i]). // kill'em all
-					set i to i+1.
-				}
+				set_os_quitting(os_data).
+				return 0.
+			}
+			else if program_selection="Close this window"{
+				kill_process(process).
 				return 0.
 			}
 			else if program_selection="Title screen"{

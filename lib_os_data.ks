@@ -37,7 +37,18 @@ function get_free_windows{
 	local lw is list().
 	local i is 0.
 	until i=len{
-		if not taken_windows:contains(i){
+		// I know there is :CONTAINS suffix for lists, but for some
+		// reason it doesn't work well here. Perhaps floating point
+		// precision issues?
+		local bad is false.
+		local j is 0.
+		until j=taken_windows:length(){
+			if taken_windows[j]=i{
+				set bad to true.
+			}
+			set j to j+1.
+		}
+		if not bad{
 			lw:add(i).
 		}
 		set i to i+1.
@@ -103,6 +114,13 @@ function draw_status_bar{
 	print "Use 1/2" at(x+1,y+1).
 	print "to move" at(x+1,y+2).
 	print "focus. " at(x+1,y+3).
+}
+
+function draw_default_status_bar{
+	parameter os_data.
+	draw_status_bar(os_data).
+	local status is get_status_window(os_data).
+	print "Press AG9 to open main menu here." at(status[0]+2,status[1]+2).
 }
 
 function new_os_data{

@@ -92,7 +92,10 @@ function update_focus{
 			break.
 		}
 	}
-	if focused_proc<>0{
+	if focused_proc=0{ // empty window is focused
+		draw_default_status_bar(os_data).
+	}
+	else{
 		invalidate_process_status(focused_proc).
 	}
 }
@@ -132,9 +135,11 @@ function restore_akros{
 	local old_terminal_height is -1. //force redraw in the beginning
 	local old_ag1 is ag1.
 	local old_ag2 is ag2.
+	local old_ag9 is ag9.
 	local old_showing_focus is get_showing_focused_window(os_data).
 	until get_process_list(os_data):length()=0{
 		local change_focus is 0.
+		local open_main_menu is false.
 		if ag1<>old_ag1{
 			set old_ag1 to ag1.
 			set change_focus to change_focus-1.
@@ -142,6 +147,10 @@ function restore_akros{
 		if ag2<>old_ag2{
 			set old_ag2 to ag2.
 			set change_focus to change_focus+1.
+		}
+		if ag9<>old_ag9{
+			set old_ag9 to ag9.
+			set open_main_menu to true.
 		}
 		local force_focus is false.
 		if get_showing_focused_window(os_data)<>old_showing_focus{
@@ -160,6 +169,20 @@ function restore_akros{
 
 			set old_terminal_width to terminal:width.
 			set old_terminal_height to terminal:height.
+		}
+		if open_main_menu{
+			local focused_proc is 0.
+			for proc in get_process_list(os_data){
+				if has_focus(proc){
+					set focused_proc to proc.
+					break.
+				}
+			}
+			if focused_proc=0{ //empty window is focused
+				get_process_list(os_data):add(
+					run_main_menu(os_data,get_focused_window(os_data))
+				).
+			}
 		}
 		update_all_processes(get_process_list(os_data)).
 	}
@@ -190,7 +213,7 @@ function launch_akros{
 	print "Done. Ready to launch now.".
 
 	get_process_list(os_data):add(
-		run_main_menu(os_data,0)
+		run_main_menu(os_data,1)
 	).
 	
 	restore_akros(os_data).

@@ -15,6 +15,7 @@
 // [7] - window focus tip width (external)
 // [8] - current highest process id
 // [9] - is akrOS exitting now?
+// [10]- newly created processes
 
 // GET:
 function get_window_tree{
@@ -135,7 +136,8 @@ function new_os_data{
 		3,      // status bar height - hardcoded to make unified experience
 		9,      // ag1/ag2 tip width - hardcoded too
 		-1,     // no processes exist yet
-		false   // not quitting yet
+		false,  // not quitting yet
+		list()  // no new processes
 	).
 }
 
@@ -180,6 +182,10 @@ function make_process_from_name{
 	local x is 1/0.
 }
 
+function get_new_processes{
+	parameter os_data.
+	return os_data[10].
+}
 
 // SET:
 function register_program{
@@ -211,4 +217,12 @@ function set_showing_focused_window{
 function set_os_quitting{
 	parameter os_data.
 	set os_data[9] to true.
+}
+
+function add_new_process{
+	parameter
+		os_data,
+		proc.
+	
+	os_data[10]:add(proc).
 }

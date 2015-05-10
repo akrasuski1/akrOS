@@ -58,7 +58,6 @@ function update_number_dialog{
 	
 	// restore:
 	local title is process[1].
-	local window is get_process_window(process).
 	local number is process[2].
 	local spaces is process[8].
 	local increment is process[9].

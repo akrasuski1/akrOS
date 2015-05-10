@@ -14,6 +14,7 @@
 // [6] - status bar height (internal)
 // [7] - window focus tip width (external)
 // [8] - current highest process id
+// [9] - is akrOS exitting now?
 
 // GET:
 function get_window_tree{
@@ -29,26 +30,21 @@ function get_window_list{
 function get_free_windows{
 	parameter os_data.
 
-	local taken_windows is list().
-	for proc in get_process_list(os_data){
-		taken_windows:add(get_process_window_index(proc)).
-	}
+	local is_taken is list().
 	local len is get_window_list(os_data):length.
+	until is_taken:length()=len{
+		is_taken:add(false).
+	}
+	for proc in get_process_list(os_data){
+		if is_process_gui(proc){
+			set is_taken[get_process_window_index(proc)] to true.
+		}
+	}
+
 	local lw is list().
 	local i is 0.
 	until i=len{
-		// I know there is :CONTAINS suffix for lists, but for some
-		// reason it doesn't work well here. Perhaps floating point
-		// precision issues?
-		local bad is false.
-		local j is 0.
-		until j=taken_windows:length(){
-			if taken_windows[j]=i{
-				set bad to true.
-			}
-			set j to j+1.
-		}
-		if not bad{
+		if not is_taken[i]{
 			lw:add(i).
 		}
 		set i to i+1.
@@ -88,6 +84,11 @@ function get_new_pid{
 	parameter os_data.
 	set os_data[8] to os_data[8]+1.
 	return os_data[8].
+}
+
+function get_os_quitting{
+	parameter os_data.
+	return os_data[9].
 }
 
 function get_focus_tip_width{
@@ -133,7 +134,8 @@ function new_os_data{
 		list(), // empty installed programs list
 		3,      // status bar height - hardcoded to make unified experience
 		9,      // ag1/ag2 tip width - hardcoded too
-		-1      // no processes exist yet
+		-1,     // no processes exist yet
+		false   // not quitting yet
 	).
 }
 
@@ -204,4 +206,9 @@ function set_showing_focused_window{
 		os_data,
 		showing.
 	set os_data[4] to showing.
+}
+
+function set_os_quitting{
+	parameter os_data.
+	set os_data[9] to true.
 }

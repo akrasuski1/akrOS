@@ -202,20 +202,22 @@ function update_main_menu{
 				if is_process_gui(process){
 					draw_empty_background(wnd).
 				}
+				local all_proc is get_process_list(os_data).
+				all_proc:add(other_process).
 				if window_selection<>window_index{ // menu is still there
-					local all_proc is get_process_list(os_data).
-					all_proc:add(other_process).
 					set child_process to create_main_menu_child(process).
 					set run_mode to "program_selection".
 				}
 				else{ // menu must disappear to show program
-					set child_process to other_process.
-					set run_mode to "waiting_for_foreground".
+					kill_process(process).
 				}
 			}
 		}
 	}
 	else if run_mode="waiting_for_foreground"{
+		// Right now, this mode is used only with system programs, such
+		// as window manager, to show main menu again after the other
+		// program quits.
 		if process_finished(child_process){
 			if is_process_gui(process){
 				set wnd to get_process_window(process). //need to reset in

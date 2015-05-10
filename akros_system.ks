@@ -187,7 +187,7 @@ function restore_akros{
 		}
 		update_all_processes(all_proc).
 		for proc in get_new_processes(os_data){
-			all_proc:add(proc).
+			all_proc:insert(0,proc).
 		}
 		get_new_processes(os_data):clear().
 	}

@@ -169,19 +169,8 @@ function update_main_menu{
 				set run_mode to "waiting_for_foreground".
 			}
 			else{
-				local taken_windows is list().
-				for proc in get_process_list(os_data){
-					taken_windows:add(get_process_window_index(proc)).
-				}
-				local len is get_window_list(os_data):length.
-				local lw is list().
-				local i is 0.
-				until i=len{
-					if i=window_index or not taken_windows:contains(i){
-						lw:add(i).
-					}
-					set i to i+1.
-				}
+				local lw is get_free_windows(os_data).
+				lw:insert(0,window_index).
 				lw:add("Background").
 				lw:add("Cancel").
 				set child_process to run_menu(

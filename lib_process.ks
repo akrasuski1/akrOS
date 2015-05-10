@@ -57,7 +57,8 @@ function process_status_needs_redraw{
 
 function has_focus{
 	parameter process.
-	return process[0][4]=get_focused_window(process[0][1]).
+	return process[0][4]=get_focused_window(process[0][1])
+		and get_showing_focused_window(get_process_os_data(process)).
 }
 
 function get_process_os_data{

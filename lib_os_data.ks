@@ -26,6 +26,25 @@ function get_window_list{
 	return os_data[1].
 }
 
+function get_free_windows{
+	parameter os_data.
+
+	local taken_windows is list().
+	for proc in get_process_list(os_data){
+		taken_windows:add(get_process_window_index(proc)).
+	}
+	local len is get_window_list(os_data):length.
+	local lw is list().
+	local i is 0.
+	until i=len{
+		if not taken_windows:contains(i){
+			lw:add(i).
+		}
+		set i to i+1.
+	}
+	return lw.
+}
+
 function get_process_list{
 	parameter os_data.
 	return os_data[2].

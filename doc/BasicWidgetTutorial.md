@@ -1,7 +1,8 @@
 # Basic widget tutorial
 
 akrOS - simple operating system made in kOS is made of modular parts called *widgets*. 
-These are separate programs that run in one particular window at a time.
+These are separate programs that run in one particular window at a time (or not - they may
+run in background).
 They are of highest interest for other developers, as they allow you to create 
 specific programs suitable for specific cases - for example rover control.
 As a matter of convention, all widgets are saved in separate files, called
@@ -131,3 +132,48 @@ The last line of this function should always be `validate_process_status(process
 the OS, that a status redraw is no longer needed for this window. If you forget this line, the OS might
 become slower, because it will redraw the status even when not needed.
 
+#### `draw` function
+
+```
+function draw_my_widget{
+	parameter process.
+
+	if not is_process_gui(process){
+		return 0.
+	}
+
+	local window is get_process_window(process).
+	local x is window[0].
+	local y is window[1].
+	local some_important_thing is process[2].
+	
+	print "Important thing is: "+some_important_thing at(x+2,y+2).
+	validate_process_window(process).
+}
+```
+
+The third function is used for general redraw of the widget window. Since this is just an example
+widget, I just display our `some_important_thing` here. A real widget might want to draw some stats here,
+for example current apoapsis and such things.
+
+Again, this function does not have enforced definition, but a general convention is that it should be called
+`draw_somename` and accept one argument - process structure. 
+
+The first thing the function should check, is whether the program even *has* its window. Since widgets can
+be ran in background (without window display), trying to draw while in background may and usually causes 
+akrOS crash. So, the safety check should be the first thing we do - we use a `is_process_gui` function, which
+tells if the process has a window.
+
+Provided that the check was succesful, we can get our window. This is made using function
+`get_process_window(process)`. This returns window structure, similar to that of status bar (x, y, w and h).
+Then we get two first fields from that window (upper left corner coordinates) and restore data from
+user data saved in process structure. Remember the first function from this tutorial? We saved
+`some_important_thing` at the second place in process structure, so now we can get it using `process[2]`.
+
+Finally, we can move to drawing. Note that we can't draw at absolute coordinates, such as `at(23,48)`, 
+because they will change every time widget is created. Instead, use relative coordinates, such as
+`at(x+2,y+15)`.
+
+The last line in this function should always be `validate_process_window(process).`. This makes OS know
+that the redraw is no longer needed. If you forget about this line, you may cause akrOS to run slowly and
+the window to be flickering rapidly. So don't forget about it.

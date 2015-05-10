@@ -140,24 +140,36 @@ function update_process{
 	//TODO: update above line function pointers come.
 }
 
+function clean_after_process_killed{
+	parameter proc.
+
+	if is_process_gui(proc){
+		draw_empty_background(get_process_window(proc)).
+		if has_focus(proc){
+			local os_data is get_process_os_data(proc).
+			draw_default_status_bar(os_data).
+		}
+	}
+}
+
 function update_all_processes{
 	parameter process_list.
 	local i is 0.
 	until i=process_list:length(){
 		local proc is process_list[i].
 		if process_finished(proc){
-			if is_process_gui(proc){
-				draw_empty_background(get_process_window(proc)).
-				if has_focus(proc){
-					local os_data is get_process_os_data(proc).
-					draw_default_status_bar(os_data).
-				}
-			}
+			clean_after_process_killed(proc).
 			process_list:remove(i).
 		}
 		else{
 			update_process(proc).
-			set i to i+1.
+			if process_finished(proc){
+				clean_after_process_killed(proc).
+				process_list:remove(i).
+			}
+			else{
+				set i to i+1.
+			}
 		}
 	}
 }

@@ -170,7 +170,7 @@ function update_main_menu{
 			}
 			else{
 				local lw is get_free_windows(os_data).
-				lw:insert(0,window_index).
+				lw:add("This window").
 				lw:add("Background").
 				lw:add("Cancel").
 				set child_process to run_menu(
@@ -190,6 +190,9 @@ function update_main_menu{
 			else{
 				if window_selection="Background"{
 					set window_selection to -1.
+				}
+				else if window_selection="This window"{
+					set window_selection to window_index.
 				}
 				
 				local other_process is make_process_from_name(

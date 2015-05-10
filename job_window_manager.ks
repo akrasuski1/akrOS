@@ -8,19 +8,15 @@ function run_window_manager{
 	parameter
 		os_data,
 		window_index.
-	// The last argument is ignored - it is here only to make a common
-	// calling interface of menu programs. Window manager always runs in
-	// window 0, because in the beginning it destroys all other windows.
 
 	local process is list(
 		make_process_system_struct(
-			os_data,"update_window_manager",0,"Window manager"
+			os_data,"update_window_manager",window_index,"Window manager"
 		),
 		"reserved","ag6","ag7","ag8","ag9","ag10",
 		get_window_tree(os_data):copy(),list(0),"x",0
 	).
 	set_showing_focused_window(os_data,false).
-	set_focused_window(os_data,0).
 	set os_data[0] to list("x").//set global window tree to just one root
 	redraw_everything(os_data).
 	local wl is get_window_list(os_data).
@@ -31,10 +27,6 @@ function run_window_manager{
 function draw_window_manager_status{
 	parameter process.
 
-	if not has_focus(process){
-		return 0.
-	}
-	
 	local status is get_status_window(get_process_os_data(process)).
 	local x is status[0].
 	local y is status[1].
@@ -50,28 +42,27 @@ function draw_window_manager_status{
 function draw_window_manager{
 	parameter process.
 
-	if not is_process_gui(process){
-		return 0.
+	if is_process_gui(process){
+		local window is get_process_window(process).
+		local x is window[0].
+		local y is window[1].
+
+		print "akrOS Window Manager" at(x+2,y+2).
+		print "[Main menu place]" at(x+2,y+4).
 	}
 	
 	//restore
-	local window is get_process_window(process).
-	local x is window[0].
-	local y is window[1].
 	local window_choice is process[8].
 	set process[10] to make_rect(
 		0,0,terminal:width,terminal:height-get_status_height(os_data)-2
 	). // need to reset this in case terminal window changed
 	local whole_screen is process[10].
-	//end restore
-
-	print "akrOS Window Manager" at(x+2,y+2).
-	print "[Main menu place]" at(x+2,y+4).
 
 	draw_window_manager_selection(
 		get_window_tree(get_process_os_data(process)),
 		whole_screen,window_choice,0
 	).
+	draw_window_manager_status(process).
 	validate_process_window(process).
 }
 
@@ -239,7 +230,7 @@ function update_window_manager{
 	set process[6] to ag10.
 	local changed_ag10 is old_ag10<>process[6].
 
-	if old_ag6="ag6" or not has_focus(process){
+	if old_ag6="ag6"{
 		set changed_ag6 to false.
 		set changed_ag7 to false.
 		set changed_ag8 to false.

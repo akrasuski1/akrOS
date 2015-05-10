@@ -163,8 +163,8 @@ function update_main_menu{
 			}
 			else if is_system_program(os_data,program_selection){
 				local other_process is make_process_from_name(
-					os_data,program_selection,0
-				). // run in window 0 without asking
+					os_data,program_selection,window_index
+				). // run in this window without asking
 				set child_process to other_process.
 				set run_mode to "waiting_for_foreground".
 			}

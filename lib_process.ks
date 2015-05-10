@@ -7,10 +7,10 @@
 // [1] - os_data (list)
 // [2] - Update_function (string)
 // [3] - Please_redraw (bool)
-// [4] - Index of process window (struct) - if non-gui, invalid index (e.g. -1)
+// [4] - Index of process window (number) - if non-gui, invalid index (e.g. -1)
 // [5] - Proces name (string)
 // [6] - Please redraw status (bool)
-// [7] - Process system id
+// [7] - Process system id (number)
 
 // GET:
 function process_finished{
@@ -149,9 +149,8 @@ function update_all_processes{
 			if is_process_gui(proc){
 				draw_empty_background(get_process_window(proc)).
 				if has_focus(proc){
-					draw_empty_background(get_status_window(
-						get_process_os_data(proc)
-					)).
+					local os_data is get_process_os_data(proc).
+					draw_default_status_bar(os_data).
 				}
 			}
 			process_list:remove(i).

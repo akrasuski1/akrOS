@@ -195,13 +195,16 @@ function restore_akros{
 			set frames_on_empty_window to 0.
 		}
 		if open_main_menu and frames_on_empty_window>1{
-			all_proc:add(
+			add_new_process(os_data,
 				run_main_menu(os_data,get_focused_window(os_data))
 			).
 		}
 		update_all_processes(all_proc).
 		for proc in get_new_processes(os_data){
 			all_proc:insert(0,proc).
+			if has_focus(proc){
+				draw_status_bar(os_data).
+			}
 		}
 		get_new_processes(os_data):clear().
 	}

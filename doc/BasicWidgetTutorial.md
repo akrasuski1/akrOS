@@ -7,7 +7,8 @@ They are of highest interest for other developers, as they allow you to create
 specific programs suitable for specific cases - for example rover control.
 As a matter of convention, all widgets are saved in separate files, called
 `job_somename`, for example `job_vessel_stats`. The only other place you will
-have to edit in order to make your widget available in akrOS, is `program_list.ks`.
+have to edit in order to make your widget available in akrOS, is `program_list.ks`. The instructions
+about it are contained in that file itself, so I won't discuss it here.
 
 ## Basic widget structure
 
@@ -177,3 +178,67 @@ because they will change every time widget is created. Instead, use relative coo
 The last line in this function should always be `validate_process_window(process).`. This makes OS know
 that the redraw is no longer needed. If you forget about this line, you may cause akrOS to run slowly and
 the window to be flickering rapidly. So don't forget about it.
+
+#### `update` function
+
+This is the most important function of them all. Since it is a bit longer than the rest, I will divide
+the explanation into two parts. First:
+
+```
+function update_my_widget{
+	parameter process.
+
+	if process_needs_redraw(process){
+		draw_my_widget(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_my_widget_status(process).
+	}
+	
+	// restore:
+	local some_important_thing is process[2].
+	
+	// input:
+	local old_ag9 is process[1].
+	set process[1] to ag9.
+	local changed_ag9 is old_ag9<>process[1].
+
+	if old_ag9="ag9" or not has_focus(process){
+		set changed_ag9 to false.
+	}
+	
+	...
+```
+
+This function is your main update function. Whatever you type here, will be repeated a couple of times
+per second by the akrOS. Treat it as though the whole code was inside a huge `until false` block.
+
+Since this function is called directly by the akrOS, it has to follow exact definition. It needs to accept 
+exactly one parameter - the process structure. By convention, it should be called `update_somename` and should
+match the function name you passed to process constructor in the first function.
+
+The first things the update function should do, is check whether the window or status need to be redrawn, and
+do it if needed. Thankfully, we have functions that do it for us, which make it simple. Just paste those six
+lines of code into your widget and you'll be fine. `process_needs_redraw` and `process_status_needs_redraw` are
+both functions provided by akrOS.
+
+The next step is to restore values you will need in the update function. Technically, you could refer to them
+as `process[2]` etc. everywhere, but it's very easy to mistake index there. If you use restore in the beginning
+of the function only, you minimize chance for error.
+
+The next step after restoring state of the "loop", is processing user input, if you need. In this case, we want
+our widget to close when you press AG9. Since our OS has focus mechanics, you can't just do `when ag9`, because
+this would ignore focus and make your widget respond to user input even if other user is concentrating on 
+another window (wants to choose something from the menu, for example).
+
+To reduce race conditions (action groups changing between game updates), you should read former state of action
+group from process structure, and immediately after that, write the current one. The result - did the user
+press the action group? - is stored in `changed_ag9` as `old_ag9<>processs[1]`, wherer `process[1]` is the new 
+AG9 state.
+
+You can add more action groups in the similar way, using these three lines for each action group. You need to
+remember however, that you still need to check two things afterwards, but still before making use of user input.
+`if old_ag9="ag9" or not has_focus(process)` - the last condition checks whether your window has focus or 
+not - if not, you can't process user input. The first condition is more delicate - when you run your program 
+via AG9 from main menu, the AG9 change can still come to your program under some conditions. This check makes
+sure you don't process user input during your very first update.

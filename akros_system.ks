@@ -137,7 +137,7 @@ function restore_akros{
 	local old_ag2 is ag2.
 	local old_ag9 is ag9.
 	local old_showing_focus is get_showing_focused_window(os_data).
-	until get_process_list(os_data):length()=0{
+	until get_os_quitting(os_data){
 		local change_focus is 0.
 		local open_main_menu is false.
 		if ag1<>old_ag1{
@@ -213,7 +213,7 @@ function launch_akros{
 	print "Done. Ready to launch now.".
 
 	get_process_list(os_data):add(
-		run_main_menu(os_data,1)
+		run_main_menu(os_data,0)
 	).
 	
 	restore_akros(os_data).

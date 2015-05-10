@@ -242,3 +242,37 @@ remember however, that you still need to check two things afterwards, but still 
 not - if not, you can't process user input. The first condition is more delicate - when you run your program 
 via AG9 from main menu, the AG9 change can still come to your program under some conditions. This check makes
 sure you don't process user input during your very first update.
+
+Second part of the `update` function:
+```
+	...
+	
+	if changed_ag9{
+		kill_process(process). // quit when ready
+		return 0.
+	}
+
+	if random()<0.5{
+		set some_important_thing to some_important_thing+1.
+		invalidate_process_window(process). // please, redraw me
+	}
+	
+	// save state:
+	set process[2] to some_important_thing.
+}
+```
+
+Finally, we are done with micromanagement of stored data and processing user input. Now, we can actually do
+stuff. Since I told you that AG9 will close the widget, here it is, in a very clean check. Inside the `if` body,
+we use `kill_process` function. This is another example of akrOS system functions - one, that pretty much every
+widget should somehow make use of. Whether by action group, or via some end condition (such as apoapsis>100000),
+every widget should end somehow. As a best practice, directly after that call, you should put `return 0.` - this
+will skip the rest of the body of the process, so that you don't waste precious kOS instructions.
+
+Then, provided we haven't finished yet, we may do our stuff. In this trivial widget example, I will simply
+increment the `some_important_thing` variable with probability 1/2. If it is incremented, we know that the number
+on the screen is no longer valid, so we need to `invalidate_process_window(processs).`, which, as code comment
+says, means just that in the next update you should redraw the screen.
+
+Finally, you should save state of the process. Do it just the same way as in the beginning of this function, just
+this time set `process[2]` etc. and not the variables. See above for the example.

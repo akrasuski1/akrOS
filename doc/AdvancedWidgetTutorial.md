@@ -177,4 +177,272 @@ in this case, we print first number, operator, second number, equal sign and res
 
 The last line validates the window - tells the system that the window no longer requires a window redraw.
 
+#### `draw status` function
 
+```
+function draw_calculator_status{
+	parameter process.
+	
+	if not has_focus(process){
+		return 0.
+	}
+
+	local run_mode is process[1].
+	local child_process is process[4].
+	if child_process<>0{ // pass redraw status event to child
+		invalidate_process_status(child_process).
+	}
+	...
+```
+
+First we check whether our window is focused - if not, we should not be drawing status in the first place, so we
+return from the function. The next thing is to restore some variables. If we have a child, we should pass a 
+status redraw event to that child by `invalidate_process_status(child_process).`
+
+```
+	if child_process<>0{ // pass redraw status event to child
+		...
+	}
+	else if run_mode="display_result"{ // redraw it yourself
+		local status_bar is get_status_window(os_data).
+		local x is status_bar[0].
+		local y is status_bar[1].
+
+		print "Press 9 to close or 8 to restart." at(x+2,y+2).
+	}
+	validate_process_status(process).
+}
+```
+
+Otherwise, we take care of status drawing ourselves. We get status bar window from the OS. Then we print some
+instructions at relative coordinates: `at(x+2,y+2)`. Finally, we validate our process' status, so that the
+OS knows the status redraw is no longer needed.
+
+#### `update` function
+
+```
+function update_calculator{
+	parameter process.
+	
+	// restore state:
+	local run_mode is process[1].
+	local child_process is process[4].
+	local first_number is process[5].
+	local operator is process[6].
+	local second_number is process[7].
+	local result is process[8].
+	local os_data is get_process_os_data(process).
+	local window_index is get_process_window_index(process).
+```
+
+All those lines a responsible for restoring process data.
+
+```
+	// input:
+	local old_ag8 is process[2].
+	set process[2] to ag8.
+	local changed_ag8 is old_ag8<>process[2].
+
+	local old_ag9 is process[3].
+	set process[3] to ag9.
+	local changed_ag9 is old_ag9<>process[3].
+
+	if old_ag8="ag8" or not has_focus(process){
+		set changed_ag8 to false.
+		set changed_ag9 to false.
+	}
+```
+
+We get user input in the same way as in the basic tutorial. Remember that we always need to check whether we have
+focus right now - otherwise you would respond to other windows' input!
+
+```
+	if process_needs_redraw(process){
+		draw_calculator(process).
+	}
+	if process_status_needs_redraw(process){
+		draw_calculator_status(process).
+	}
+```
+
+Taking care of redrawing window and status bar.
+
+```
+	local child_return is 0.
+	if child_process<>0{ // update child if needed
+		set child_return to update_process(child_process).
+	}
+```
+
+Updating child process if needed. Since we will need its return value, we save it in a local variable.
+
+```
+	if run_mode="just_started"{
+		set child_process to run_number_dialog(
+			os_data,
+			window_index,
+			"First number:",
+			0
+		).
+		set run_mode to "input_first_number".
+	}
+```
+
+The huge `if` block begins here. If our `run_mode` is "just_started", that means it is our very first frame,
+so we will have to create a number dialog. The parameters for that widget are as follows:
+* os_data
+* window_index
+* title text
+* initial number, here 0
+
+Then, we need to set our `run_mode` to "input_first_number", since that is the thing we will be doing next.
+
+```
+	else if run_mode="input_first_number"{
+		if process_finished(child_process){
+			set first_number to child_return.
+			if is_process_gui(process){
+				draw_empty_background(get_process_window(process)).
+				draw_status_bar(os_data).
+			}
+			set child_process to run_menu(
+				os_data,
+				window_index,
+				"Operator: ["+first_number+"_]",
+				list("+","-","*","/","^"),
+				false
+			).
+			set run_mode to "input_operator".
+		}
+	}
+```
+
+If we are at the next step, we want the user to input a number. If our child process has finished, that means
+the user did just that. So we can set `first_number` variable to a value our child has returned earlier. Since
+we will then spawn a new child, we need to clean screen first. We do it through `draw_empty_background` and
+`draw_status_bar` functions. Since our process could technically be backgrounded (useless, but we have to prepare
+for that), we need to wrap these two lines in an `if is_process_gui(process)` block.
+
+Then, we can spawn a new child. This time, we won't be inputting a number, but rather an operator. The easiest
+way to do this is by using a menu widget. It accepts the following arguments:
+* os_data
+* window_index
+* title text
+* list of available options
+* boolean stating whether the process should return an index of the chosen value, or that value itself. In most
+cases you want this to be false (return the value itself)
+
+Then we just set `run_mode` to "input_operator".
+
+```
+	else if run_mode="input_operator"{
+		if process_finished(child_process){
+			set operator to child_return.
+			if is_process_gui(process){
+				draw_empty_background(get_process_window(process)).
+				draw_status_bar(os_data).
+			}
+			set child_process to run_number_dialog(
+				os_data,
+				window_index,
+				"Second number: ["+first_number+operator+"_]",
+				0
+			).
+			set run_mode to "input_second_number".
+		}
+	}
+```
+
+This is a very similar block to the previous one. Refer to its explanation.
+
+```
+	else if run_mode="input_second_number"{
+		if process_finished(child_process){
+			set second_number to child_return.
+			if is_process_gui(process){
+				draw_empty_background(get_process_window(process)).
+				draw_status_bar(os_data).
+			}
+			set child_process to 0. // no process
+			set run_mode to "display_result".
+			if operator="+"{
+				set result to first_number+second_number.
+			}
+			else if operator="-"{
+				set result to first_number-second_number.
+			}
+			else if operator="*"{
+				set result to first_number*second_number.
+			}
+			else if operator="/"{
+				set result to first_number/second_number.
+			}
+			else if operator="^"{
+				set result to first_number^second_number.
+			}
+			invalidate_process_window(process). // print result
+			invalidate_process_status(process). // print status
+		}
+	}
+```
+
+Finally, we have gathered all the data we need from the user. We can erase the child process (`set child_process
+to 0.`). Then, we calculate the result of the operation - this is what a calculator does, after all. We will want
+to display the varaible afterwards, so we invalidate our process' window. Status is cleaned as well, because
+in our own display, we will use the status ourselves.
+
+```
+	else if run_mode="display_result"{
+		if changed_ag8{
+			if is_process_gui(process){
+				draw_empty_background(get_process_window(process)).
+				draw_status_bar(os_data).
+			}
+			set child_process to run_number_dialog(
+				os_data,
+				window_index,
+				"Input first number:",
+				0
+			).
+			set run_mode to "input_first_number".
+		}
+		if changed_ag9{
+			kill_process(process).
+			return 0.
+		}
+	}
+```
+
+If we are displaying results, we need to process any user input ourselves (previously child processes were doing
+it for us). If AG8 is pressed, we want to clear window and status, prompt user for new first number, and finally
+reset our `run_mode` to "input_first_number".
+
+If user has pressed AG9 though, we want to finish calculator process (`kill_process(process).`)
+
+```
+	else{
+		print "Invalid run_mode: "+run_mode. print 1/0.
+	}
+```
+
+For safety and debugging reasons, it is very useful to always add line like that to your program. If you
+mistype a run mode anywhere, this line will be ran and you will be notified that something went wrong. Otherwise
+you could spend hours tracing down the bug.
+
+```
+	// save
+	set process[1] to run_mode.
+	set process[4] to child_process.
+	set process[5] to first_number.
+	set process[6] to operator.
+	set process[7] to second_number.
+	set process[8] to result.
+}
+```
+
+Finally, after all the update code is done, we need to save our variables to process structure.
+
+#### `process_list.ks`
+
+Don't forget to add your widget as an entry to `process_list.ks` file. Otherwise, you won't be able to even
+select your widget from the main menu.

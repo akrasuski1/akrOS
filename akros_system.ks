@@ -237,10 +237,6 @@ function launch_akros{
 	get_process_list(os_data):add(
 		run_main_menu(os_data,0)
 	).
-	run job_number_dialog. //remove me later
-	get_process_list(os_data):add(
-		run_number_dialog(os_data,1,"Input new apoapsis:",100000)
-	). //end remove me later
 	
 	restore_akros(os_data).
 }

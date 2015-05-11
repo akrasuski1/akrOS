@@ -22,3 +22,23 @@ groups are:
   - return_index (boolean which if true, causes the function to return index of choice instead)
 * return value: if return_index is false (recommended), returns the chosen value. Otherwise (return_index is true),
 returns the index of the chosen value.
+
+## Number dialog
+
+![Screenshot](http://i.imgur.com/b4H2T02.png)
+* description: This widget shows a prompt for a number. The used action
+groups are:
+  - AG6 - decrement number
+  - AG7 - increment number
+  - AG8 - decrease step
+  - AG9 - increase step
+  - AG10 - accept number
+* file: `job_number_dialog.ks`
+* run_function: `run_number_dialog`
+* arguments:
+  - os_data
+  - window_index
+  - title (string to be printed over the choices)
+  - starting_number (useful if you want to, for instance, prompt for new apoapsis. Then you can put current
+apoapsis there, so that user has a starting point)
+* return value: typed number

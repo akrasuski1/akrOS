@@ -276,3 +276,8 @@ says, means just that in the next update you should redraw the screen.
 
 Finally, you should save state of the process. Do it just the same way as in the beginning of this function, just
 this time set `process[2]` etc. and not the variables. See above for the example.
+
+#### `program_list.ks`
+
+Don't forget to add your newly created widget to `program_list.ks` file. Otherwise you won't be able to select
+it from the main menu. The added linee  in that file should look like this: `run widget_skeleton(os_data).`

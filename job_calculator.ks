@@ -67,7 +67,7 @@ function draw_calculator_status{
 	if child_process<>0{ // pass redraw status event to child
 		invalidate_process_status(child_process).
 	}
-	else{ // redraw it yourself
+	else if run_mode="display_result"{ // redraw it yourself
 		local status_bar is get_status_window(os_data).
 		local x is status_bar[0].
 		local y is status_bar[1].
@@ -124,7 +124,6 @@ function update_calculator{
 			"First number:",
 			0
 		).
-		draw_status_bar(os_data).
 		set run_mode to "input_first_number".
 	}
 	else if run_mode="input_first_number"{

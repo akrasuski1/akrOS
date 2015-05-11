@@ -280,4 +280,4 @@ this time set `process[2]` etc. and not the variables. See above for the example
 #### `program_list.ks`
 
 Don't forget to add your newly created widget to `program_list.ks` file. Otherwise you won't be able to select
-it from the main menu. The added linee  in that file should look like this: `run widget_skeleton(os_data).`
+it from the main menu. The added linee  in that file should look like this: `run job_widget_skeleton(os_data).`

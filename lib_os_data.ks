@@ -10,7 +10,7 @@
 //    [0] - name of program
 //    [1] - run program function
 //    [2] - boolean stating whether it is system program 
-//          (runs always in window 0)
+//          (does not ask for its window)
 // [6] - status bar height (internal)
 // [7] - window focus tip width (external)
 // [8] - current highest process id

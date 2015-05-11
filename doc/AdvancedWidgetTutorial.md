@@ -442,7 +442,7 @@ you could spend hours tracing down the bug.
 
 Finally, after all the update code is done, we need to save our variables to process structure.
 
-#### `process_list.ks`
+#### `program_list.ks`
 
-Don't forget to add your widget as an entry to `process_list.ks` file. Otherwise, you won't be able to even
+Don't forget to add your widget as an entry to `program_list.ks` file. Otherwise, you won't be able to even
 select your widget from the main menu.

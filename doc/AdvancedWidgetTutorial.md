@@ -17,18 +17,18 @@ functions right now - they are just abstractions, keeping the code simple.
 
 ## Run modes
 
-The above code contains a couple of main process states: waiting for first number, waiting for operator, waiting
+The above code contains a couple of process states: waiting for first number, waiting for operator, waiting
 for second number, displaying result. The akrOS processes are ran in an infinite loop, so we need to somehow
 differentiate between them. The easiest way to do this, is by using *run modes* - variable, usually string one,
 denoting current state. So the update function would look like:
 ```
-if run_mode="prompt_number1"{
+if run_mode="input_first_number"{
 	set num1 to prompt_for_number().
-	set run_mode to "prompt_operator".
+	set run_mode to "input_operator".
 }
-else if run_mode="prompt_operator"{
+else if run_mode="input_operator"{
 	set operator to prompt_for_option("+","-","*","/","^").
-	set run_mode to "prompt_number2".
+	set run_mode to "input_second_number".
 }
 else if
 	...
@@ -52,6 +52,28 @@ number mean, after all?
 
 So, we can use number dialog as a first part of our program. It should be ran as a *child process*. In order
 to do this, you should remember child process' structure as one of the fields in your own process, for example
-as `process[1]`. In the very first frame, you should create that child process.
+as `process[1]`. In the very first frame, you should create that child process, for example: 
+`set child_process to run_number_dialog(os_data,window_index,"Input number:",0).`
 
-TODO: finish
+Note that this way, akrOS will not "know" about the child process directly. Thus, you will have to update the child
+on your own. Don't worry though, it's pretty simple. All you need to do, is type: `set child_return to
+update_process(child_process).` and that's it. If you don't need the returned value, you can even skip the first
+three words as well.
+
+One more thing you should take care of, is redrawing of the child window and status. In order to do this, you 
+should pass redraw event to child whenever necessary. This may sound enigmatically, but it's quite simple as well.
+In your draw function, type the following line to be run whenever you have a child process:
+`change_process_window(child_process,window_index).` I know this may sound weird, but believe me - that is exactly
+the line you need to type. There is alsso a function called `invalidate_process_window`, but it is not recommended
+in this case, because if your parent process is moved to another window via process manager, your child will be
+ignorant about this change. The recommended line takes care about this situation by always passing current window
+to the child redraw function. 
+
+Children status update is done via a similar line in your status draw function:
+`invalidate_process_status(child_process).` Note that you do not need to pass any windows and such to child, as
+status bar is common to all windows in the system.
+
+## Example - calculator
+
+I believe that this introduction prepared you to face the first advanced widget - it will be a calculator.
+

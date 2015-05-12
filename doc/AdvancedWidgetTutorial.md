@@ -375,10 +375,21 @@ This is a very similar block to the previous one. Refer to its explanation.
 				set result to first_number*second_number.
 			}
 			else if operator="/"{
-				set result to first_number/second_number.
+				if abs(second_number)>0{
+					set result to first_number/second_number.
+				}
+				else{
+					set result to "Error".
+				}
 			}
 			else if operator="^"{
-				set result to first_number^second_number.
+				if first_number<0
+					and abs(second_number-round(second_number,0))>0{
+					set result to "Error".
+				}
+				else{
+					set result to first_number^second_number.
+				}
 			}
 			invalidate_process_window(process). // print result
 			invalidate_process_status(process). // print status
@@ -387,9 +398,10 @@ This is a very similar block to the previous one. Refer to its explanation.
 ```
 
 Finally, we have gathered all the data we need from the user. We can erase the child process (`set child_process
-to 0.`). Then, we calculate the result of the operation - this is what a calculator does, after all. We will want
-to display the varaible afterwards, so we invalidate our process' window. Status is cleaned as well, because
-in our own display, we will use the status ourselves.
+to 0.`). Then, we calculate the result of the operation - this is what a calculator does, after all (we check
+for a couple of special cases too, such as division by zero). We will want to display the variable afterwards, 
+so we invalidate our process' window. Status is cleaned as well, because in our own display, we will use the
+status ourselves.
 
 ```
 	else if run_mode="display_result"{

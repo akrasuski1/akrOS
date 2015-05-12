@@ -178,10 +178,21 @@ function update_calculator{
 				set result to first_number*second_number.
 			}
 			else if operator="/"{
-				set result to first_number/second_number.
+				if abs(second_number)>0{
+					set result to first_number/second_number.
+				}
+				else{
+					set result to "Error".
+				}
 			}
 			else if operator="^"{
-				set result to first_number^second_number.
+				if first_number<0
+					and abs(second_number-round(second_number,0))>0{
+					set result to "Error".
+				}
+				else{
+					set result to first_number^second_number.
+				}
 			}
 			invalidate_process_window(process). // print result
 			invalidate_process_status(process). // print status

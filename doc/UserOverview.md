@@ -12,6 +12,7 @@ several parts. They are generally called *windows* in akrOS. Since akrOS uses gr
 be any command typing - you do everything via action groups.
 
 The main things visible on the screen since the beginning, are:
+
 1. The title screen - it's the biggest window with akrOS logo and short instruction printed on it. It says: "Press
 9 to start." So go ahead and press it. If nothing has happened, don't worry - everything is fine. Since kOS mod 
 captures all the keystrokes while it is focused, you can't do anything in akrOS when terminal is active. So, if you

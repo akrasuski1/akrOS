@@ -1,5 +1,8 @@
 # akrOS user overview
 
+In order to start akrOS, you will need to download all `.ks` files from this repository, put them in your script
+folder and then type `run akros.` command in your in-game terminal.
+
 ## Title screen
 
 ![Title screen](http://i.imgur.com/f0p8U5s.png)

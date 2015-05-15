@@ -83,6 +83,7 @@ I believe that this introduction prepared you to face the first advanced widget 
 @lazyglobal off.
 
 run job_number_dialog.
+run job_menu.
 
 // add to OS
 parameter os_data.
@@ -90,9 +91,8 @@ register_program(os_data,"Calculator","run_calculator",false).
 ```
 
 It is very similar to what you saw in basic widget tutorial. Note that we will need number dialog, which is not
-included with standard akrOS package, so we need to include it here via `run job_number_dialog.` Although
-we also use menu widget, we don't need to include it explicitly, because it *is* a part of standard akrOS package,
-since it is used by the main menu. Feel free to include it if you want, though.
+included with standard akrOS package, so we need to include it here via `run job_number_dialog.` Same applies to
+`job_menu`.
 
 #### `run` function
 

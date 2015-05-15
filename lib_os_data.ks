@@ -16,6 +16,7 @@
 // [8] - current highest process id
 // [9] - is akrOS exitting now?
 // [10]- newly created processes
+// [11]- are we using main menu? (bool)
 
 // GET:
 function get_window_tree{
@@ -121,8 +122,10 @@ function draw_status_bar{
 function draw_default_status_bar{
 	parameter os_data.
 	draw_status_bar(os_data).
-	local status is get_status_window(os_data).
-	print "Press AG9 to open main menu here." at(status[0]+2,status[1]+2).
+	if get_using_main_menu(os_data){
+		local status is get_status_window(os_data).
+		print "Press AG9 to open main menu here." at(status[0]+2,status[1]+2).
+	}
 }
 
 function new_os_data{
@@ -137,7 +140,8 @@ function new_os_data{
 		9,      // ag1/ag2 tip width - hardcoded too
 		-1,     // no processes exist yet
 		false,  // not quitting yet
-		list()  // no new processes
+		list(), // no new processes
+		true    // using main menu by default
 	).
 }
 
@@ -187,6 +191,11 @@ function get_new_processes{
 	return os_data[10].
 }
 
+function get_using_main_menu{
+	parameter os_data.
+	return os_data[11].
+}
+
 // SET:
 function register_program{
 	parameter
@@ -225,4 +234,11 @@ function add_new_process{
 		proc.
 	
 	os_data[10]:add(proc).
+}
+
+function set_using_main_menu{
+	parameter
+		os_data,
+		using.
+	set os_data[11] to using.
 }

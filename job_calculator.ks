@@ -1,6 +1,7 @@
 @lazyglobal off.
 
 run job_number_dialog.
+run job_menu.
 
 // add to OS
 parameter os_data.

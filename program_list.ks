@@ -10,6 +10,6 @@ function install_programs{
 	run job_vessel_stats(os_data).
 	run job_window_manager(os_data).
 	run job_process_manager(os_data).
-	//run widget_skeleton(os_data).
+	run job_resources(os_data).
 	run job_calculator(os_data).
 }

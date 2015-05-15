@@ -6,6 +6,7 @@
 function install_programs{
 	parameter os_data.
 
+	run job_main_menu(os_data).
 	run job_vessel_stats(os_data).
 	run job_window_manager(os_data).
 	run job_process_manager(os_data).

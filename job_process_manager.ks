@@ -1,5 +1,7 @@
 @lazyglobal off.
 
+run job_menu.
+
 // add to OS
 parameter os_data.
 register_program(os_data,"Process manager","run_process_manager",false).

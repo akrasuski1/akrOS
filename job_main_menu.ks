@@ -1,5 +1,9 @@
 @lazyglobal off.
 
+run job_menu.
+
+parameter dummy. // just for the common calling
+
 function run_main_menu{
 	parameter
 		os_data,

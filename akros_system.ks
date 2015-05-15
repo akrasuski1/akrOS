@@ -11,10 +11,6 @@ print "Loading process library...".
 run lib_process.
 print "Loading window library...".
 run lib_window.
-print "Loading menu library...".
-run job_menu.
-print "Loading main menu library...".
-run job_main_menu.
 
 // User defined programs:
 print "Loading user program list...".
@@ -234,9 +230,33 @@ function launch_akros{
 	install_programs(os_data).
 	print "Done. Ready to launch now.".
 
-	get_process_list(os_data):add(
-		run_main_menu(os_data,0)
-	).
+	add_new_process(os_data,run_main_menu(os_data,0)).
 	
+	restore_akros(os_data).
+}
+
+// This function allows you to specify most of important things in akrOS
+// during launch - window positions and size, and programs being ran.
+// Still, programs will be ran from scratch (without any previous state)
+// The second argument (program_list) is a list of two-element lists,
+// first element of which is program name, and the second number of window
+// it should be ran in.
+// Note that main menu is not ran, unless specifically asked to.
+function launch_akros_with_programs{
+	parameter
+		window_tree,
+		program_list.
+	
+	local os_data is new_os_data().
+	set os_data[0] to window_tree.
+
+	print "Installing programs...".
+	install_programs(os_data).
+	print "Done. Ready to launch now.".
+	
+	for p in program_list{
+		add_new_process(os_data,make_process_from_name(os_data,p[0],p[1])).
+	}
+
 	restore_akros(os_data).
 }

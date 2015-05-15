@@ -75,10 +75,6 @@ function update_focus{
 		return 0.
 	}
 	set_focused_window(os_data,current).
-	if get_showing_focused_window(os_data){
-		draw_focused_window_outline(
-			get_window_list(os_data)[current]).
-	}
 	local i is 0.
 	for wnd in get_window_list(os_data){
 		draw_window_number(wnd,i).
@@ -96,6 +92,10 @@ function update_focus{
 	}
 	else{
 		invalidate_process_status(focused_proc).
+	}
+	if get_showing_focused_window(os_data){
+		draw_focused_window_outline(
+			get_window_list(os_data)[current]).
 	}
 }
 
@@ -171,29 +171,31 @@ function restore_akros{
 			set old_terminal_width to terminal:width.
 			set old_terminal_height to terminal:height.
 		}
-
-		if get_showing_focused_window(os_data){
-			local focused_proc is 0.
-			for proc in all_proc{
-				if has_focus(proc){
-					set focused_proc to proc.
-					break.
+		
+		if get_using_main_menu(os_data){
+			if get_showing_focused_window(os_data){
+				local focused_proc is 0.
+				for proc in all_proc{
+					if has_focus(proc){
+						set focused_proc to proc.
+						break.
+					}
 				}
-			}
-			if focused_proc=0{
-				set frames_on_empty_window to frames_on_empty_window+1.
+				if focused_proc=0{
+					set frames_on_empty_window to frames_on_empty_window+1.
+				}
+				else{
+					set frames_on_empty_window to 0.
+				}
 			}
 			else{
 				set frames_on_empty_window to 0.
 			}
-		}
-		else{
-			set frames_on_empty_window to 0.
-		}
-		if open_main_menu and frames_on_empty_window>1{
-			add_new_process(os_data,
-				run_main_menu(os_data,get_focused_window(os_data))
-			).
+			if open_main_menu and frames_on_empty_window>1{
+				add_new_process(os_data,
+					run_main_menu(os_data,get_focused_window(os_data))
+				).
+			}
 		}
 		update_all_processes(all_proc).
 		for proc in get_new_processes(os_data){
@@ -254,8 +256,18 @@ function launch_akros_with_programs{
 	install_programs(os_data).
 	print "Done. Ready to launch now.".
 	
+	local main_menu is false.
 	for p in program_list{
-		add_new_process(os_data,make_process_from_name(os_data,p[0],p[1])).
+		if p[0]="Main menu"{
+			add_new_process(os_data,run_main_menu(os_data,p[1])).
+			set main_menu to true.
+		}
+		else{
+			add_new_process(os_data,make_process_from_name(os_data,p[0],p[1])).
+		}
+	}
+	if not main_menu{
+		set_using_main_menu(os_data,false).
 	}
 
 	restore_akros(os_data).

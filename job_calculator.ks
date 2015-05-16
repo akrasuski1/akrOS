@@ -132,7 +132,7 @@ function update_calculator{
 			set first_number to child_return.
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 			set child_process to run_menu(
 				os_data,
@@ -149,7 +149,7 @@ function update_calculator{
 			set operator to child_return.
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 			set child_process to run_number_dialog(
 				os_data,
@@ -165,7 +165,7 @@ function update_calculator{
 			set second_number to child_return.
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 			set child_process to 0. // no process
 			set run_mode to "display_result".
@@ -203,7 +203,7 @@ function update_calculator{
 		if changed_ag8{
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 			set child_process to run_number_dialog(
 				os_data,

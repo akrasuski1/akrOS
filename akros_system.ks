@@ -201,7 +201,7 @@ function restore_akros{
 		for proc in get_new_processes(os_data){
 			all_proc:insert(0,proc).
 			if has_focus(proc){
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 		}
 		get_new_processes(os_data):clear().

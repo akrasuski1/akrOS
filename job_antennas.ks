@@ -172,7 +172,7 @@ function update_antennas{
 			set antenna to antenna_list[child_return].
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 			invalidate_process_window(process).
 			invalidate_process_status(process).
@@ -185,7 +185,7 @@ function update_antennas{
 			set run_mode to "just_started".
 			if is_process_gui(process){
 				draw_empty_background(get_process_window(process)).
-				draw_status_bar(os_data).
+				clear_status_window(os_data).
 			}
 		}
 		if changed_ag8{

@@ -119,6 +119,11 @@ function draw_status_bar{
 	print "focus. " at(x+1,y+3).
 }
 
+function clear_status_window{
+	parameter os_data.
+	draw_empty_background(get_status_window(os_data)).
+}
+
 function draw_default_status_bar{
 	parameter os_data.
 	draw_status_bar(os_data).
